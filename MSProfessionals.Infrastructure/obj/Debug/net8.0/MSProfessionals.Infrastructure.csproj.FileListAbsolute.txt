@@ -1,0 +1,17 @@
+E:\git\ms_professionals\MSProfessionals.Infrastructure\bin\Debug\net8.0\MSProfessionals.Infrastructure.deps.json
+E:\git\ms_professionals\MSProfessionals.Infrastructure\bin\Debug\net8.0\MSProfessionals.Infrastructure.runtimeconfig.json
+E:\git\ms_professionals\MSProfessionals.Infrastructure\bin\Debug\net8.0\MSProfessionals.Infrastructure.dll
+E:\git\ms_professionals\MSProfessionals.Infrastructure\bin\Debug\net8.0\MSProfessionals.Infrastructure.pdb
+E:\git\ms_professionals\MSProfessionals.Infrastructure\bin\Debug\net8.0\MSProfessionals.Domain.dll
+E:\git\ms_professionals\MSProfessionals.Infrastructure\bin\Debug\net8.0\MSProfessionals.Domain.pdb
+E:\git\ms_professionals\MSProfessionals.Infrastructure\obj\Debug\net8.0\MSProfessionals.Infrastructure.csproj.AssemblyReference.cache
+E:\git\ms_professionals\MSProfessionals.Infrastructure\obj\Debug\net8.0\MSProfessionals.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+E:\git\ms_professionals\MSProfessionals.Infrastructure\obj\Debug\net8.0\MSProfessionals.Infrastructure.AssemblyInfoInputs.cache
+E:\git\ms_professionals\MSProfessionals.Infrastructure\obj\Debug\net8.0\MSProfessionals.Infrastructure.AssemblyInfo.cs
+E:\git\ms_professionals\MSProfessionals.Infrastructure\obj\Debug\net8.0\MSProfessionals.Infrastructure.csproj.CoreCompileInputs.cache
+E:\git\ms_professionals\MSProfessionals.Infrastructure\obj\Debug\net8.0\MSProfes.6F66BCF6.Up2Date
+E:\git\ms_professionals\MSProfessionals.Infrastructure\obj\Debug\net8.0\MSProfessionals.Infrastructure.dll
+E:\git\ms_professionals\MSProfessionals.Infrastructure\obj\Debug\net8.0\refint\MSProfessionals.Infrastructure.dll
+E:\git\ms_professionals\MSProfessionals.Infrastructure\obj\Debug\net8.0\MSProfessionals.Infrastructure.pdb
+E:\git\ms_professionals\MSProfessionals.Infrastructure\obj\Debug\net8.0\MSProfessionals.Infrastructure.genruntimeconfig.cache
+E:\git\ms_professionals\MSProfessionals.Infrastructure\obj\Debug\net8.0\ref\MSProfessionals.Infrastructure.dll

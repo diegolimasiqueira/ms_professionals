@@ -1,0 +1,11 @@
+E:\git\ms_professionals\MSProfessionals.Domain\bin\Debug\net8.0\MSProfessionals.Domain.deps.json
+E:\git\ms_professionals\MSProfessionals.Domain\bin\Debug\net8.0\MSProfessionals.Domain.dll
+E:\git\ms_professionals\MSProfessionals.Domain\bin\Debug\net8.0\MSProfessionals.Domain.pdb
+E:\git\ms_professionals\MSProfessionals.Domain\obj\Debug\net8.0\MSProfessionals.Domain.GeneratedMSBuildEditorConfig.editorconfig
+E:\git\ms_professionals\MSProfessionals.Domain\obj\Debug\net8.0\MSProfessionals.Domain.AssemblyInfoInputs.cache
+E:\git\ms_professionals\MSProfessionals.Domain\obj\Debug\net8.0\MSProfessionals.Domain.AssemblyInfo.cs
+E:\git\ms_professionals\MSProfessionals.Domain\obj\Debug\net8.0\MSProfessionals.Domain.csproj.CoreCompileInputs.cache
+E:\git\ms_professionals\MSProfessionals.Domain\obj\Debug\net8.0\MSProfessionals.Domain.dll
+E:\git\ms_professionals\MSProfessionals.Domain\obj\Debug\net8.0\refint\MSProfessionals.Domain.dll
+E:\git\ms_professionals\MSProfessionals.Domain\obj\Debug\net8.0\MSProfessionals.Domain.pdb
+E:\git\ms_professionals\MSProfessionals.Domain\obj\Debug\net8.0\ref\MSProfessionals.Domain.dll

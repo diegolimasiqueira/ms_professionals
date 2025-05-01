@@ -1,0 +1,15 @@
+E:\git\ms_professionals\MSProfessionals.Application\bin\Debug\net8.0\MSProfessionals.Application.deps.json
+E:\git\ms_professionals\MSProfessionals.Application\bin\Debug\net8.0\MSProfessionals.Application.dll
+E:\git\ms_professionals\MSProfessionals.Application\bin\Debug\net8.0\MSProfessionals.Application.pdb
+E:\git\ms_professionals\MSProfessionals.Application\bin\Debug\net8.0\MSProfessionals.Domain.dll
+E:\git\ms_professionals\MSProfessionals.Application\bin\Debug\net8.0\MSProfessionals.Domain.pdb
+E:\git\ms_professionals\MSProfessionals.Application\obj\Debug\net8.0\MSProfessionals.Application.csproj.AssemblyReference.cache
+E:\git\ms_professionals\MSProfessionals.Application\obj\Debug\net8.0\MSProfessionals.Application.GeneratedMSBuildEditorConfig.editorconfig
+E:\git\ms_professionals\MSProfessionals.Application\obj\Debug\net8.0\MSProfessionals.Application.AssemblyInfoInputs.cache
+E:\git\ms_professionals\MSProfessionals.Application\obj\Debug\net8.0\MSProfessionals.Application.AssemblyInfo.cs
+E:\git\ms_professionals\MSProfessionals.Application\obj\Debug\net8.0\MSProfessionals.Application.csproj.CoreCompileInputs.cache
+E:\git\ms_professionals\MSProfessionals.Application\obj\Debug\net8.0\MSProfes.360A65BD.Up2Date
+E:\git\ms_professionals\MSProfessionals.Application\obj\Debug\net8.0\MSProfessionals.Application.dll
+E:\git\ms_professionals\MSProfessionals.Application\obj\Debug\net8.0\refint\MSProfessionals.Application.dll
+E:\git\ms_professionals\MSProfessionals.Application\obj\Debug\net8.0\MSProfessionals.Application.pdb
+E:\git\ms_professionals\MSProfessionals.Application\obj\Debug\net8.0\ref\MSProfessionals.Application.dll
