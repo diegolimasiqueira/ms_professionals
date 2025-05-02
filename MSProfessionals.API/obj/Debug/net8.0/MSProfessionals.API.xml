@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>MSProfessionals.API</name>
+    </assembly>
+    <members>
+        <member name="T:MSProfessionals.API.Controllers.ProfessionalsController">
+            <summary>
+            Controller for managing professionals
+            </summary>
+        </member>
+        <member name="M:MSProfessionals.API.Controllers.ProfessionalsController.#ctor(MediatR.IMediator)">
+            <summary>
+            Initializes a new instance of the ProfessionalsController
+            </summary>
+            <param name="mediator">Mediator for handling commands</param>
+        </member>
+        <member name="M:MSProfessionals.API.Controllers.ProfessionalsController.Create(MSProfessionals.Application.Commands.Professional.CreateProfessionalCommand)">
+            <summary>
+            Creates a new professional
+            </summary>
+            <param name="command">Professional data</param>
+            <returns>Created professional</returns>
+            <response code="201">Returns the newly created professional</response>
+            <response code="400">If the professional data is invalid</response>
+            <response code="500">If an internal server error occurs</response>
+        </member>
+        <member name="M:MSProfessionals.API.Controllers.ProfessionalsController.GetById(System.Guid)">
+            <summary>
+            Gets a professional by ID
+            </summary>
+            <param name="id">Professional ID</param>
+            <returns>Professional data</returns>
+            <response code="200">Returns the requested professional</response>
+            <response code="404">If the professional is not found</response>
+            <response code="500">If an internal server error occurs</response>
+        </member>
+        <member name="M:MSProfessionals.API.Controllers.ProfessionalsController.GetByName(System.String)">
+            <summary>
+            Gets a professional by name
+            </summary>
+            <param name="name">Professional name</param>
+            <returns>Professional data</returns>
+            <response code="200">Returns the requested professional</response>
+            <response code="404">If the professional is not found</response>
+            <response code="500">If an internal server error occurs</response>
+        </member>
+        <member name="M:MSProfessionals.API.Controllers.ProfessionalsController.Update(System.Guid,MSProfessionals.Application.Commands.Professional.UpdateProfessionalCommand)">
+            <summary>
+            Updates a professional
+            </summary>
+            <param name="id">Professional ID</param>
+            <param name="command">Professional data</param>
+            <returns>Updated professional</returns>
+            <response code="200">Returns the updated professional</response>
+            <response code="400">If the professional data is invalid</response>
+            <response code="404">If the professional is not found</response>
+            <response code="500">If an internal server error occurs</response>
+        </member>
+        <member name="M:MSProfessionals.API.Controllers.ProfessionalsController.Delete(System.Guid)">
+            <summary>
+            Deletes a professional
+            </summary>
+            <param name="id">Professional ID</param>
+            <returns>No content</returns>
+            <response code="204">If the professional was successfully deleted</response>
+            <response code="404">If the professional is not found</response>
+            <response code="500">If an internal server error occurs</response>
+        </member>
+    </members>
+</doc>

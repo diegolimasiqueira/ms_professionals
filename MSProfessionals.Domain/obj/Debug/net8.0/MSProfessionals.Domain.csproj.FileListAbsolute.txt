@@ -9,3 +9,4 @@ E:\git\ms_professionals\MSProfessionals.Domain\obj\Debug\net8.0\MSProfessionals.
 E:\git\ms_professionals\MSProfessionals.Domain\obj\Debug\net8.0\refint\MSProfessionals.Domain.dll
 E:\git\ms_professionals\MSProfessionals.Domain\obj\Debug\net8.0\MSProfessionals.Domain.pdb
 E:\git\ms_professionals\MSProfessionals.Domain\obj\Debug\net8.0\ref\MSProfessionals.Domain.dll
+E:\git\ms_professionals\MSProfessionals.Domain\obj\Debug\net8.0\MSProfessionals.Domain.sourcelink.json

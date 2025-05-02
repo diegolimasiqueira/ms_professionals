@@ -15,3 +15,4 @@ E:\git\ms_professionals\MSProfessionals.Infrastructure\obj\Debug\net8.0\refint\M
 E:\git\ms_professionals\MSProfessionals.Infrastructure\obj\Debug\net8.0\MSProfessionals.Infrastructure.pdb
 E:\git\ms_professionals\MSProfessionals.Infrastructure\obj\Debug\net8.0\MSProfessionals.Infrastructure.genruntimeconfig.cache
 E:\git\ms_professionals\MSProfessionals.Infrastructure\obj\Debug\net8.0\ref\MSProfessionals.Infrastructure.dll
+E:\git\ms_professionals\MSProfessionals.Infrastructure\obj\Debug\net8.0\MSProfessionals.Infrastructure.sourcelink.json

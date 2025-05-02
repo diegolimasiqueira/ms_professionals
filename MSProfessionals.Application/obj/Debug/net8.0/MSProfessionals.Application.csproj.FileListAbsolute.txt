@@ -13,3 +13,6 @@ E:\git\ms_professionals\MSProfessionals.Application\obj\Debug\net8.0\MSProfessio
 E:\git\ms_professionals\MSProfessionals.Application\obj\Debug\net8.0\refint\MSProfessionals.Application.dll
 E:\git\ms_professionals\MSProfessionals.Application\obj\Debug\net8.0\MSProfessionals.Application.pdb
 E:\git\ms_professionals\MSProfessionals.Application\obj\Debug\net8.0\ref\MSProfessionals.Application.dll
+E:\git\ms_professionals\MSProfessionals.Application\obj\Debug\net8.0\MSProfessionals.Application.sourcelink.json
+E:\git\ms_professionals\MSProfessionals.Application\bin\Debug\net8.0\MSProfessionals.Infrastructure.dll
+E:\git\ms_professionals\MSProfessionals.Application\bin\Debug\net8.0\MSProfessionals.Infrastructure.pdb

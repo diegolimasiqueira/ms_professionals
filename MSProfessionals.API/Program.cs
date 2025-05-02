@@ -1,59 +1,91 @@
-using Microsoft.EntityFrameworkCore;
-using MSProfessionals.API.Configurations;
 using MSProfessionals.API.Extensions;
-using MSProfessionals.Infrastructure.Context;
 using MSProfessionals.Infrastructure.Extensions;
+using MSProfessionals.Application.Commands;
+using MSProfessionals.API.Configurations;
+using MSProfessionals.Infrastructure.Context;
+using HealthChecks.UI.Client;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.Extensions.DependencyInjection;
+using Npgsql;
+using Microsoft.EntityFrameworkCore;
+using MSProfessionals.API.Middleware;
+using MSProfessionals.Application.Commands.Professional;
+using MSProfessionals.Domain.Interfaces;
+using MSProfessionals.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerConfiguration();
 
-// Add database configuration
-builder.Services.AddDatabaseConfiguration(builder.Configuration);
+// Add Health Checks
+builder.Services.AddHealthChecks()
+    .AddCheck("self", () => HealthCheckResult.Healthy())
+    .AddDbContextCheck<ApplicationDbContext>(); 
+
+// Add Health Checks UI
+builder.Services.AddHealthChecksUI(setup =>
+{
+    setup.SetEvaluationTimeInSeconds(5);
+    setup.MaximumHistoryEntriesPerEndpoint(10);
+    setup.SetApiMaxActiveRequests(1);
+    setup.AddHealthCheckEndpoint("API", "/health");
+})
+.AddInMemoryStorage();
+
+// Add MediatR
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateProfessionalCommand).Assembly));
+
+// Add Infrastructure
+builder.Services.AddInfrastructureServices(builder.Configuration);
+builder.Services.AddScoped<IApplicationDbContext, ApplicationDbContext>();
+builder.Services.AddScoped<IProfessionalRepository, ProfessionalRepository>();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwaggerConfiguration();
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "MSProfessionals API V1");
+        c.RoutePrefix = string.Empty; // Define a rota raiz para o Swagger
+        c.DocumentTitle = "MSProfessionals API Documentation";
+        c.DefaultModelsExpandDepth(-1); // Oculta os schemas por padrão
+        c.DisplayRequestDuration();
+        c.EnableDeepLinking();
+        c.EnableFilter();
+    });
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
-app.UseExceptionMiddleware();
-
+app.UseMiddleware<ExceptionMiddleware>();
 app.MapControllers();
 
-var summaries = new[]
+// Configure Health Checks
+app.MapHealthChecks("/health", new HealthCheckOptions
 {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
 
-app.MapGet("/weatherforecast", () =>
+app.MapHealthChecks("/health-json", new HealthCheckOptions
 {
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
+
+// Add Health Checks UI
+app.UseHealthChecksUI(options =>
+{
+    options.UIPath = "/health-ui";
+    options.ApiPath = "/health-ui-api";
+});
+
+// Add global exception handler
+app.UseExceptionMiddleware();
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

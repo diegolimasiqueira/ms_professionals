@@ -1,39 +1,39 @@
 using Microsoft.OpenApi.Models;
+using System.Reflection;
 
-namespace MSProfessionals.API.Configurations
+namespace MSProfessionals.API.Configurations;
+
+public static class SwaggerConfiguration
 {
-    public static class SwaggerConfiguration
+    public static IServiceCollection AddSwaggerConfiguration(this IServiceCollection services)
     {
-        public static IServiceCollection AddSwaggerConfiguration(this IServiceCollection services)
+        services.AddSwaggerGen(c =>
         {
-            services.AddSwaggerGen(c =>
+            c.SwaggerDoc("v1", new OpenApiInfo
             {
-                c.SwaggerDoc("v1", new OpenApiInfo
+                Title = "MsConsumers API",
+                Version = "v1",
+                Description = "API for consumer management",
+                Contact = new OpenApiContact
                 {
-                    Title = "MSProfessionals API",
-                    Version = "v1",
-                    Description = "API for managing professionals",
-                    Contact = new OpenApiContact
-                    {
-                        Name = "MSProfessionals Team",
-                        Email = "contact@msprofessionals.com"
-                    }
-                });
+                    Name = "Development Team",
+                    Email = "diego@easyprofind.com",
+                    Url = new Uri("https://easyprofind.com/contact")
+                }               
             });
 
-            return services;
-        }
-
-        public static IApplicationBuilder UseSwaggerConfiguration(this IApplicationBuilder app)
-        {
-            app.UseSwagger();
-            app.UseSwaggerUI(c =>
+            // Include XML comments in the documentation if the file exists
+            var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+            var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+            if (File.Exists(xmlPath))
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "MSProfessionals API v1");
-                c.RoutePrefix = string.Empty;
-            });
+                c.IncludeXmlComments(xmlPath);
+            }
 
-            return app;
-        }
+            // Additional configurations
+            c.OrderActionsBy(apiDesc => $"{apiDesc.ActionDescriptor.RouteValues["controller"]}_{apiDesc.HttpMethod}");
+        });
+
+        return services;
     }
 } 

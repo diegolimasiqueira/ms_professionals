@@ -2,10 +2,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using MSProfessionals.Domain.Entities;
 using MSProfessionals.Infrastructure.Configurations;
+using System.Text.Json;
 
 namespace MSProfessionals.Infrastructure.Context
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : DbContext, IApplicationDbContext
     {
         private readonly DatabaseSettings _databaseSettings;
 
@@ -108,7 +109,14 @@ namespace MSProfessionals.Infrastructure.Context
                 entity.Property(e => e.Name).HasColumnName("name").HasMaxLength(100).IsRequired();
                 entity.Property(e => e.DocumentId).HasColumnName("document_id").HasMaxLength(50).IsRequired();
                 entity.Property(e => e.PhotoUrl).HasColumnName("photo_url").HasMaxLength(500).IsRequired(false);
-                entity.Property(e => e.SocialMedia).HasColumnName("social_media").HasColumnType("jsonb").IsRequired(false);
+                entity.Property(e => e.SocialMedia)
+                    .HasColumnName("social_media")
+                    .HasColumnType("jsonb")
+                    .HasConversion(
+                        v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null),
+                        v => JsonSerializer.Deserialize<Dictionary<string, string>>(v, (JsonSerializerOptions)null)
+                    )
+                    .IsRequired(false);
                 entity.Property(e => e.PhoneNumber).HasColumnName("phone_number").HasMaxLength(20).IsRequired();
                 entity.Property(e => e.Email).HasColumnName("email").HasMaxLength(255).IsRequired();
                 entity.Property(e => e.CurrencyId).HasColumnName("currency_id").IsRequired();
@@ -117,7 +125,14 @@ namespace MSProfessionals.Infrastructure.Context
                 entity.Property(e => e.TimezoneId).HasColumnName("timezone_id").IsRequired();
                 entity.Property(e => e.CreatedAt).HasColumnName("created_at").IsRequired();
                 entity.Property(e => e.UpdatedAt).HasColumnName("updated_at").IsRequired();
-                entity.Property(e => e.Media).HasColumnName("media").HasColumnType("jsonb").IsRequired(false);
+                entity.Property(e => e.Media)
+                    .HasColumnName("media")
+                    .HasColumnType("jsonb")
+                    .HasConversion(
+                        v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null),
+                        v => JsonSerializer.Deserialize<Dictionary<string, string>>(v, (JsonSerializerOptions)null)
+                    )
+                    .IsRequired(false);
 
                 entity.HasIndex(e => e.DocumentId).IsUnique();
                 entity.HasIndex(e => e.Email).IsUnique();

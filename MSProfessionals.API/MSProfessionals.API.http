@@ -1,6 +1,0 @@
-@MSProfessionals.API_HostAddress = http://localhost:5233
-
-GET {{MSProfessionals.API_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

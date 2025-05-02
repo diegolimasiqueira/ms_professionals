@@ -2,10 +2,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MSProfessionals.Domain\MSProfessionals.Domain.csproj" />
+    <ProjectReference Include="..\MSProfessionals.Infrastructure\MSProfessionals.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="MediatR" Version="12.5.0" />
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="8.0.0" />
   </ItemGroup>
 
   <PropertyGroup>
