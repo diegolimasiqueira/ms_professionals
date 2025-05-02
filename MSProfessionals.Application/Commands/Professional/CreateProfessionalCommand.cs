@@ -8,7 +8,7 @@ namespace MSProfessionals.Application.Commands.Professional;
 /// <summary>
 /// Command to create a professional
 /// </summary>
-public class CreateProfessionalCommand : IRequest<Domain.Entities.Professional>
+public class CreateProfessionalCommand : IRequest<CreateProfessionalCommandResponse>
 {
     /// <summary>
     /// Professional's name

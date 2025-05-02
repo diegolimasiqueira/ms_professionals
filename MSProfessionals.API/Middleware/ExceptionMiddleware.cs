@@ -1,24 +1,36 @@
-using System;
 using System.Net;
 using System.Text.Json;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Npgsql;
 using MSProfessionals.Domain.Exceptions;
+using MSProfessionals.Application.Common.Exceptions;
 
 namespace MSProfessionals.API.Middleware
 {
+    /// <summary>
+    /// Middleware for handling exceptions globally
+    /// </summary>
     public class ExceptionMiddleware
     {
         private readonly RequestDelegate _next;
         private readonly ILogger<ExceptionMiddleware> _logger;
 
+        /// <summary>
+        /// Initializes a new instance of the ExceptionMiddleware
+        /// </summary>
+        /// <param name="next">Next middleware in the pipeline</param>
+        /// <param name="logger">Logger</param>
         public ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger)
         {
             _next = next;
             _logger = logger;
         }
 
+        /// <summary>
+        /// Invokes the middleware
+        /// </summary>
+        /// <param name="context">HTTP context</param>
         public async Task InvokeAsync(HttpContext context)
         {
             try
@@ -27,6 +39,7 @@ namespace MSProfessionals.API.Middleware
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "An unhandled exception occurred");
                 await HandleExceptionAsync(context, ex);
             }
         }
@@ -34,175 +47,210 @@ namespace MSProfessionals.API.Middleware
         private async Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
             context.Response.ContentType = "application/json";
-            var response = new
+            
+            var response = exception switch
             {
-                StatusCode = (int)HttpStatusCode.InternalServerError,
-                Message = "An internal server error occurred. Please try again later.",
-                Details = exception.Message
+                DbUpdateException dbEx when dbEx.InnerException is PostgresException pgEx => 
+                    HandlePostgresException(pgEx),
+                NotFoundException notFoundEx => 
+                    new ErrorResponse((int)HttpStatusCode.NotFound, "Resource not found", notFoundEx.Message),
+                ProfessionalNotFoundException profEx => 
+                    new ErrorResponse((int)HttpStatusCode.NotFound, "Professional not found", profEx.Message),
+                ProfessionalServiceNotFoundException svcEx => 
+                    new ErrorResponse((int)HttpStatusCode.NotFound, "Professional service not found", svcEx.Message),
+                ProfessionalProfessionNotFoundException profEx => 
+                    new ErrorResponse((int)HttpStatusCode.NotFound, "Professional profession not found", profEx.Message),
+                ServiceNotFoundException svcEx => 
+                    new ErrorResponse((int)HttpStatusCode.NotFound, "Service not found", svcEx.Message),
+                ProfessionalAddressNotFoundException addrEx => 
+                    new ErrorResponse((int)HttpStatusCode.NotFound, "Professional address not found", addrEx.Message),
+                ValidationException valEx => 
+                    new ErrorResponse((int)HttpStatusCode.BadRequest, "Validation error", valEx.Message),
+                ArgumentException argEx => 
+                    new ErrorResponse((int)HttpStatusCode.BadRequest, "Invalid argument", argEx.Message),
+                InvalidOperationException invOpEx => 
+                    new ErrorResponse((int)HttpStatusCode.BadRequest, "Invalid operation", invOpEx.Message),
+                UniqueConstraintViolationException uniqueEx => 
+                    new ErrorResponse((int)HttpStatusCode.Conflict, "Unique constraint violation", uniqueEx.Message),
+                _ => new ErrorResponse(StatusCodes.Status500InternalServerError, 
+                    "An internal server error occurred", 
+                    "An unexpected error occurred. Please try again later.")
             };
 
-            switch (exception)
-            {
-                case ProfessionalNotFoundException professionalNotFoundException:
-                    context.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                    response = new
-                    {
-                        StatusCode = (int)HttpStatusCode.NotFound,
-                        Message = "Professional not found",
-                        Details = professionalNotFoundException.Message
-                    };
-                    break;
-
-                case DbUpdateException dbUpdateException:
-                    if (dbUpdateException.InnerException is PostgresException postgresException)
-                    {
-                        switch (postgresException.SqlState)
-                        {
-                            case "23503": // Foreign key violation
-                                context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                                response = new
-                                {
-                                    StatusCode = (int)HttpStatusCode.BadRequest,
-                                    Message = "Invalid reference data",
-                                    Details = GetForeignKeyErrorMessage(postgresException)
-                                };
-                                break;
-                            case "23505": // Unique constraint violation
-                                var fieldName = GetUniqueConstraintFieldName(postgresException);
-                                var fieldValue = GetUniqueConstraintFieldValue(postgresException);
-                                
-                                context.Response.StatusCode = (int)HttpStatusCode.Conflict;
-                                response = new
-                                {
-                                    StatusCode = (int)HttpStatusCode.Conflict,
-                                    Message = "Unique constraint violation",
-                                    Details = new UniqueConstraintViolationException(fieldName, fieldValue).Message
-                                };
-                                break;
-                            case "42703": // Column does not exist
-                                context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                                response = new
-                                {
-                                    StatusCode = (int)HttpStatusCode.BadRequest,
-                                    Message = "Invalid column reference",
-                                    Details = $"The column '{GetColumnNameFromMessage(postgresException.Message)}' does not exist in the table"
-                                };
-                                break;
-                            case "23502": // Not null violation
-                                context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                                response = new
-                                {
-                                    StatusCode = (int)HttpStatusCode.BadRequest,
-                                    Message = "Required field missing",
-                                    Details = $"The field '{GetColumnNameFromMessage(postgresException.Message)}' cannot be null"
-                                };
-                                break;
-                            case "22P02": // Invalid text representation
-                                context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                                response = new
-                                {
-                                    StatusCode = (int)HttpStatusCode.BadRequest,
-                                    Message = "Invalid data format",
-                                    Details = "One or more fields contain invalid data format"
-                                };
-                                break;
-                            case "23514": // Check violation
-                                context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                                response = new
-                                {
-                                    StatusCode = (int)HttpStatusCode.BadRequest,
-                                    Message = "Data validation failed",
-                                    Details = GetCheckViolationMessage(postgresException)
-                                };
-                                break;
-                        }
-                    }
-                    else if (dbUpdateException.InnerException != null)
-                    {
-                        context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                        response = new
-                        {
-                            StatusCode = (int)HttpStatusCode.BadRequest,
-                            Message = "Database operation failed",
-                            Details = dbUpdateException.InnerException.Message
-                        };
-                    }
-                    break;
-            }
-
-            _logger.LogError(exception, "Error processing request: {Message}", exception.Message);
+            context.Response.StatusCode = response.StatusCode;
             await context.Response.WriteAsync(JsonSerializer.Serialize(response));
         }
 
-        private string GetColumnNameFromMessage(string message)
+        private static ErrorResponse HandlePostgresException(PostgresException pgEx)
         {
-            // The message is something like: "column "CountryCodeId" of relation "tb_consumer_address" does not exist"
+            return pgEx.SqlState switch
+            {
+                // Integrity constraint violations
+                "23503" => new ErrorResponse(StatusCodes.Status400BadRequest, 
+                    "Foreign key violation", 
+                    GetForeignKeyErrorMessage(pgEx)),
+                "23505" => new ErrorResponse(StatusCodes.Status409Conflict, 
+                    "Unique constraint violation", 
+                    GetUniqueConstraintMessage(pgEx)),
+                "23514" => new ErrorResponse(StatusCodes.Status400BadRequest, 
+                    "Check constraint violation", 
+                    GetCheckViolationMessage(pgEx)),
+                
+                // Invalid data
+                "22000" => new ErrorResponse(StatusCodes.Status400BadRequest, 
+                    "Data error", 
+                    "The provided data is invalid"),
+                "22003" => new ErrorResponse(StatusCodes.Status400BadRequest, 
+                    "Numeric value out of range", 
+                    "A numeric value is out of range"),
+                "22007" => new ErrorResponse(StatusCodes.Status400BadRequest, 
+                    "Invalid datetime format", 
+                    "The datetime format is invalid"),
+                "22P02" => new ErrorResponse(StatusCodes.Status400BadRequest, 
+                    "Invalid text representation", 
+                    "The provided value has an invalid format"),
+
+                // Invalid schema/object references
+                "42703" => new ErrorResponse(StatusCodes.Status400BadRequest, 
+                    "Column does not exist", 
+                    GetColumnErrorMessage(pgEx)),
+                "42P01" => new ErrorResponse(StatusCodes.Status500InternalServerError, 
+                    "Table does not exist", 
+                    "The requested table does not exist in the database"),
+                
+                // Transaction errors
+                "40001" => new ErrorResponse(StatusCodes.Status409Conflict, 
+                    "Serialization failure", 
+                    "The transaction failed due to concurrent updates. Please try again."),
+                "40P01" => new ErrorResponse(StatusCodes.Status409Conflict, 
+                    "Deadlock detected", 
+                    "The operation was cancelled due to a deadlock. Please try again."),
+
+                // Default case
+                _ => new ErrorResponse(StatusCodes.Status500InternalServerError, 
+                    "Database error", 
+                    $"A database error occurred: {pgEx.MessageText}")
+            };
+        }
+
+        private static string GetForeignKeyErrorMessage(PostgresException exception)
+        {
+            var constraintName = exception.ConstraintName?.ToLower() ?? string.Empty;
+
+            if (constraintName.Contains("phone_country_code_id"))
+                return "The provided country code ID does not exist";
+            if (constraintName.Contains("currency_id"))
+                return "The provided currency ID does not exist";
+            if (constraintName.Contains("preferred_language_id"))
+                return "The provided language ID does not exist";
+            if (constraintName.Contains("timezone_id"))
+                return "The provided timezone ID does not exist";
+            if (constraintName.Contains("country_id"))
+                return "The provided country ID does not exist";
+            if (constraintName.Contains("professional_id"))
+                return "The provided professional ID does not exist";
+            if (constraintName.Contains("profession_id"))
+                return "The provided profession ID does not exist";
+            if (constraintName.Contains("service_id"))
+                return "The provided service ID does not exist";
+
+            return $"The referenced {GetConstraintEntityName(constraintName)} does not exist";
+        }
+
+        private static string GetConstraintEntityName(string constraintName)
+        {
+            var parts = constraintName.Split('_');
+            return parts.Length > 1 ? parts[^2] : "record";
+        }
+
+        private static string GetUniqueConstraintMessage(PostgresException exception)
+        {
+            var fieldName = GetUniqueConstraintFieldName(exception);
+            var fieldValue = GetUniqueConstraintFieldValue(exception);
+            return $"A {fieldName} with value '{fieldValue}' already exists";
+        }
+
+        private static string GetColumnErrorMessage(PostgresException exception)
+        {
+            var columnName = GetColumnNameFromMessage(exception.Message);
+            return $"The column '{columnName}' does not exist in the table";
+        }
+
+        private static string GetCheckViolationMessage(PostgresException exception)
+        {
+            var constraintName = exception.ConstraintName?.ToLower() ?? string.Empty;
+
+            if (constraintName.Contains("email_format"))
+                return "The email address format is invalid";
+            if (constraintName.Contains("phone_format"))
+                return "The phone number format is invalid";
+            if (constraintName.Contains("document_format"))
+                return "The document ID format is invalid";
+            if (constraintName.Contains("positive"))
+                return "The value must be positive";
+            if (constraintName.Contains("range"))
+                return "The value is outside the allowed range";
+            if (constraintName.Contains("length"))
+                return "The text length is invalid";
+
+            return "The provided data does not meet the validation rules";
+        }
+
+        private static string GetColumnNameFromMessage(string message)
+        {
             var startIndex = message.IndexOf('"', message.IndexOf("column")) + 1;
             var endIndex = message.IndexOf('"', startIndex);
-            
+
             if (startIndex > 0 && endIndex > startIndex)
             {
                 return message.Substring(startIndex, endIndex - startIndex);
             }
-            
+
             return "Unknown";
         }
 
-        private string GetForeignKeyErrorMessage(PostgresException exception)
+        private static string GetUniqueConstraintFieldName(PostgresException exception)
         {
             var constraintName = exception.ConstraintName?.ToLower() ?? string.Empty;
-            
-            if (constraintName.Contains("phone_country_code_id")) 
-                return "The provided country code ID does not exist";
-            if (constraintName.Contains("currency_id")) 
-                return "The provided currency ID does not exist";
-            if (constraintName.Contains("preferred_language_id")) 
-                return "The provided language ID does not exist";
-            if (constraintName.Contains("timezone_id")) 
-                return "The provided timezone ID does not exist";
-            if (constraintName.Contains("country_id")) 
-                return "The provided country ID does not exist";
-            
-            return "The provided reference data is invalid";
-        }
 
-        private string GetUniqueConstraintFieldName(PostgresException exception)
-        {
-            var constraintName = exception.ConstraintName?.ToLower() ?? string.Empty;
-            
             if (constraintName.Contains("email")) return "Email";
             if (constraintName.Contains("document_id")) return "Document ID";
             if (constraintName.Contains("phone_number")) return "Phone Number";
-            
-            return "Unique field";
+            if (constraintName.Contains("professional_id")) return "Professional ID";
+            if (constraintName.Contains("profession_id")) return "Profession ID";
+            if (constraintName.Contains("service_id")) return "Service ID";
+
+            return GetConstraintEntityName(constraintName);
         }
 
-        private string GetUniqueConstraintFieldValue(PostgresException exception)
+        private static string GetUniqueConstraintFieldValue(PostgresException exception)
         {
             var detail = exception.Detail ?? string.Empty;
             var startIndex = detail.IndexOf("=(") + 2;
             var endIndex = detail.IndexOf(")");
-            
+
             if (startIndex > 1 && endIndex > startIndex)
             {
                 return detail.Substring(startIndex, endIndex - startIndex);
             }
-            
+
             return "Duplicate value";
         }
 
-        private string GetCheckViolationMessage(PostgresException exception)
+        private class ErrorResponse
         {
-            var constraintName = exception.ConstraintName?.ToLower() ?? string.Empty;
-            
-            if (constraintName.Contains("email_format")) 
-                return "The email address format is invalid";
-            if (constraintName.Contains("phone_format")) 
-                return "The phone number format is invalid";
-            if (constraintName.Contains("document_format")) 
-                return "The document ID format is invalid";
-            
-            return "The data does not meet the required validation rules";
+            public int StatusCode { get; }
+            public string Message { get; }
+            public string Details { get; }
+            public string Type { get; }
+
+            public ErrorResponse(int statusCode, string message, string details)
+            {
+                StatusCode = statusCode;
+                Message = message;
+                Details = details;
+                Type = "Error";
+            }
         }
     }
-} 
+}

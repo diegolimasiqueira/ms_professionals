@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Builder;
 using MSProfessionals.API.Middleware;
 
 namespace MSProfessionals.API.Extensions

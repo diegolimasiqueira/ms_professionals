@@ -8,7 +8,7 @@ namespace MSProfessionals.Application.Commands.Professional;
 /// <summary>
 /// Command to update a professional
 /// </summary>
-public class UpdateProfessionalCommand : IRequest<Domain.Entities.Professional>
+public class UpdateProfessionalCommand : IRequest<UpdateProfessionalCommandResponse>
 {
     /// <summary>
     /// Professional ID

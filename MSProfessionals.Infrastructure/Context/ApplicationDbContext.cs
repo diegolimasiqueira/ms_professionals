@@ -1,11 +1,14 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using MSProfessionals.Domain.Entities;
 using MSProfessionals.Infrastructure.Configurations;
+using MSProfessionals.Infrastructure.Extensions;
 using System.Text.Json;
 
 namespace MSProfessionals.Infrastructure.Context
 {
+    /// <summary>
+    /// Application database context
+    /// </summary>
     public class ApplicationDbContext : DbContext, IApplicationDbContext
     {
         private readonly DatabaseSettings _databaseSettings;
@@ -22,6 +25,10 @@ namespace MSProfessionals.Infrastructure.Context
         public DbSet<ProfessionalAddress> ProfessionalAddresses { get; set; } = null!;
         public DbSet<Professional> Professionals { get; set; } = null!;
         public DbSet<Domain.Entities.TimeZone> TimeZones { get; set; } = null!;
+        public DbSet<Profession> Professions { get; set; } = null!;
+        public DbSet<Service> Services { get; set; } = null!;
+        public DbSet<ProfessionalProfession> ProfessionalProfessions { get; set; } = null!;
+        public DbSet<ProfessionalService> ProfessionalServices { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -116,7 +123,7 @@ namespace MSProfessionals.Infrastructure.Context
                         v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null),
                         v => JsonSerializer.Deserialize<Dictionary<string, string>>(v, (JsonSerializerOptions)null)
                     )
-                    .IsRequired(false);
+                    .Metadata.SetValueComparer(new DictionaryComparer<string, string>());
                 entity.Property(e => e.PhoneNumber).HasColumnName("phone_number").HasMaxLength(20).IsRequired();
                 entity.Property(e => e.Email).HasColumnName("email").HasMaxLength(255).IsRequired();
                 entity.Property(e => e.CurrencyId).HasColumnName("currency_id").IsRequired();
@@ -132,7 +139,7 @@ namespace MSProfessionals.Infrastructure.Context
                         v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null),
                         v => JsonSerializer.Deserialize<Dictionary<string, string>>(v, (JsonSerializerOptions)null)
                     )
-                    .IsRequired(false);
+                    .Metadata.SetValueComparer(new DictionaryComparer<string, string>());
 
                 entity.HasIndex(e => e.DocumentId).IsUnique();
                 entity.HasIndex(e => e.Email).IsUnique();
@@ -145,7 +152,7 @@ namespace MSProfessionals.Infrastructure.Context
                     .OnDelete(DeleteBehavior.Cascade);
 
                 entity.HasOne(e => e.PhoneCountryCode)
-                    .WithMany()
+                    .WithMany(c => c.Professionals)
                     .HasForeignKey(e => e.PhoneCountryCodeId)
                     .HasConstraintName("FK_tb_professionals_tb_country_codes_phone_country_code_id")
                     .OnDelete(DeleteBehavior.Cascade);
@@ -176,6 +183,76 @@ namespace MSProfessionals.Infrastructure.Context
                 entity.Property(e => e.Name).HasColumnName("name").HasMaxLength(50).IsRequired();
                 entity.Property(e => e.Description).HasColumnName("description").HasMaxLength(100).IsRequired();
             });
+
+            modelBuilder.Entity<Profession>(entity =>
+            {
+                entity.ToTable("tb_professions");
+                entity.HasKey(e => e.Id).HasName("PK_tb_professions");
+                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.Name).HasColumnName("name").HasMaxLength(50).IsRequired();
+                entity.HasIndex(e => e.Name).HasDatabaseName("UQ_tb_professions_name").IsUnique();
+            });
+
+            modelBuilder.Entity<Service>(entity =>
+            {
+                entity.ToTable("tb_services");
+                entity.HasKey(e => e.Id).HasName("PK_tb_services");
+                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.Name).HasColumnName("name").HasMaxLength(100).IsRequired();
+                entity.HasIndex(e => e.Name).HasDatabaseName("UQ_tb_services_name").IsUnique();
+            });
+
+            modelBuilder.Entity<ProfessionalProfession>(entity =>
+            {
+                entity.ToTable("tb_professional_professions");
+                entity.HasKey(e => e.Id).HasName("PK_tb_professional_professions");
+                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.ProfessionalId).HasColumnName("professional_id").IsRequired();
+                entity.Property(e => e.ProfessionId).HasColumnName("profession_id").IsRequired();
+                entity.Property(e => e.CreatedAt).HasColumnName("created_at").IsRequired();
+                entity.Property(e => e.UpdatedAt).HasColumnName("updated_at").IsRequired();
+
+                entity.HasOne(e => e.Professional)
+                    .WithMany(p => p.ProfessionalProfessions)
+                    .HasForeignKey(e => e.ProfessionalId)
+                    .HasConstraintName("FK_tb_professional_professions_tb_professionals_professional_id")
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(e => e.Profession)
+                    .WithMany(p => p.ProfessionalProfessions)
+                    .HasForeignKey(e => e.ProfessionId)
+                    .HasConstraintName("FK_tb_professional_professions_tb_professions_profession_id")
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasIndex(e => e.ProfessionalId).HasDatabaseName("IX_tb_professional_professions_professional_id");
+                entity.HasIndex(e => e.ProfessionId).HasDatabaseName("IX_tb_professional_professions_profession_id");
+            });
+
+            modelBuilder.Entity<ProfessionalService>(entity =>
+            {
+                entity.ToTable("tb_professional_services");
+                entity.HasKey(e => e.Id).HasName("PK_tb_professional_services");
+                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.ProfessionalProfessionId).HasColumnName("professional_profession_id").IsRequired();
+                entity.Property(e => e.ServiceId).HasColumnName("service_id").IsRequired();
+                entity.Property(e => e.CreatedAt).HasColumnName("created_at").IsRequired();
+                entity.Property(e => e.UpdatedAt).HasColumnName("updated_at").IsRequired();
+
+                entity.HasOne(e => e.ProfessionalProfession)
+                    .WithMany(p => p.ProfessionalServices)
+                    .HasForeignKey(e => e.ProfessionalProfessionId)
+                    .HasConstraintName("FK_tb_professional_services_tb_professional_professions_professional_profession_id")
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(e => e.Service)
+                    .WithMany(s => s.ProfessionalServices)
+                    .HasForeignKey(e => e.ServiceId)
+                    .HasConstraintName("FK_tb_professional_services_tb_services_service_id")
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasIndex(e => e.ProfessionalProfessionId).HasDatabaseName("IX_tb_professional_services_professional_profession_id");
+                entity.HasIndex(e => e.ServiceId).HasDatabaseName("IX_tb_professional_services_service_id");
+            });
         }
     }
-} 
+}

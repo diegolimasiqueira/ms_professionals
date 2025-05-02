@@ -12,7 +12,7 @@ namespace MSProfessionals.Application.Commands.Professional;
 /// <summary>
 /// Handler for the CreateProfessionalCommand
 /// </summary>
-public class CreateProfessionalCommandHandler : IRequestHandler<CreateProfessionalCommand, Domain.Entities.Professional>
+public class CreateProfessionalCommandHandler : IRequestHandler<CreateProfessionalCommand, CreateProfessionalCommandResponse>
 {
     private readonly IProfessionalRepository _professionalRepository;
 
@@ -31,7 +31,7 @@ public class CreateProfessionalCommandHandler : IRequestHandler<CreateProfession
     /// <param name="request">Create professional command</param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>The created professional</returns>
-    public async Task<Domain.Entities.Professional> Handle(CreateProfessionalCommand request, CancellationToken cancellationToken)
+    public async Task<CreateProfessionalCommandResponse> Handle(CreateProfessionalCommand request, CancellationToken cancellationToken)
     {
         // Validate the request using DataAnnotations
         Validator.ValidateObject(request, new ValidationContext(request), validateAllProperties: true);
@@ -62,6 +62,21 @@ public class CreateProfessionalCommandHandler : IRequestHandler<CreateProfession
         };
 
         await _professionalRepository.AddAsync(professional, cancellationToken);
-        return professional;
+
+        return new CreateProfessionalCommandResponse
+        {
+            Id = professional.Id,
+            Name = professional.Name,
+            DocumentId = professional.DocumentId,
+            PhotoUrl = professional.PhotoUrl,
+            PhoneNumber = professional.PhoneNumber,
+            Email = professional.Email,
+            CurrencyId = professional.CurrencyId,
+            PhoneCountryCodeId = professional.PhoneCountryCodeId,
+            PreferredLanguageId = professional.PreferredLanguageId,
+            TimezoneId = professional.TimezoneId,
+            CreatedAt = professional.CreatedAt,
+            UpdatedAt = professional.UpdatedAt
+        };
     }
 } 

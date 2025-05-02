@@ -8,7 +8,7 @@ namespace MSProfessionals.Application.Commands.Professional;
 /// <summary>
 /// Command to get a professional by ID
 /// </summary>
-public class GetProfessionalByIdCommand : IRequest<Domain.Entities.Professional>
+public class GetProfessionalByIdCommand : IRequest<GetProfessionalByIdCommandResponse>
 {
     /// <summary>
     /// Professional ID

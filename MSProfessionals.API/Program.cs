@@ -1,18 +1,12 @@
 using MSProfessionals.API.Extensions;
 using MSProfessionals.Infrastructure.Extensions;
-using MSProfessionals.Application.Commands;
+using MSProfessionals.Application.Commands.Professional;
 using MSProfessionals.API.Configurations;
-using MSProfessionals.Infrastructure.Context;
+using MSProfessionals.Infrastructure.Data;
 using HealthChecks.UI.Client;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Microsoft.Extensions.DependencyInjection;
-using Npgsql;
-using Microsoft.EntityFrameworkCore;
-using MSProfessionals.API.Middleware;
-using MSProfessionals.Application.Commands.Professional;
-using MSProfessionals.Domain.Interfaces;
-using MSProfessionals.Infrastructure.Repositories;
+using MSProfessionals.Application.Commands.ProfessionalAddress;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,8 +17,7 @@ builder.Services.AddSwaggerConfiguration();
 
 // Add Health Checks
 builder.Services.AddHealthChecks()
-    .AddCheck("self", () => HealthCheckResult.Healthy())
-    .AddDbContextCheck<ApplicationDbContext>(); 
+    .AddCheck("self", () => HealthCheckResult.Healthy());
 
 // Add Health Checks UI
 builder.Services.AddHealthChecksUI(setup =>
@@ -39,10 +32,8 @@ builder.Services.AddHealthChecksUI(setup =>
 // Add MediatR
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateProfessionalCommand).Assembly));
 
-// Add Infrastructure
+// Add infrastructure services
 builder.Services.AddInfrastructureServices(builder.Configuration);
-builder.Services.AddScoped<IApplicationDbContext, ApplicationDbContext>();
-builder.Services.AddScoped<IProfessionalRepository, ProfessionalRepository>();
 
 var app = builder.Build();
 
@@ -52,10 +43,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "MSProfessionals API V1");
-        c.RoutePrefix = string.Empty; // Define a rota raiz para o Swagger
-        c.DocumentTitle = "MSProfessionals API Documentation";
-        c.DefaultModelsExpandDepth(-1); // Oculta os schemas por padrão
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "MsProfessionals API V1");
+        c.RoutePrefix = string.Empty;
+        c.DocumentTitle = "MsProfessionals API Documentation";
+        c.DefaultModelsExpandDepth(-1);
         c.DisplayRequestDuration();
         c.EnableDeepLinking();
         c.EnableFilter();
@@ -64,10 +55,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseAuthorization();
-app.UseMiddleware<ExceptionMiddleware>();
 app.MapControllers();
 
-// Configure Health Checks
+// Add Health Check endpoints
 app.MapHealthChecks("/health", new HealthCheckOptions
 {
     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse

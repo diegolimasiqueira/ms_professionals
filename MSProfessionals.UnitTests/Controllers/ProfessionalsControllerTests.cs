@@ -10,22 +10,25 @@ using MSProfessionals.Domain.Exceptions;
 using MediatR;
 using MSProfessionals.Application.Commands.Professional;
 using MSProfessionals.Domain.Entities;
+using Microsoft.Extensions.Logging;
 
 namespace MSProfessionals.UnitTests.Controllers;
 
 public class ProfessionalsControllerTests
 {
     private readonly Mock<IMediator> _mediatorMock;
+    private readonly Mock<ILogger<ProfessionalsController>> _loggerMock;
     private readonly ProfessionalsController _controller;
 
     public ProfessionalsControllerTests()
     {
         _mediatorMock = new Mock<IMediator>();
-        _controller = new ProfessionalsController(_mediatorMock.Object);
+        _loggerMock = new Mock<ILogger<ProfessionalsController>>();
+        _controller = new ProfessionalsController(_mediatorMock.Object, _loggerMock.Object);
     }
 
     [Fact]
-    public async Task Create_WithValidData_ReturnsCreatedResult()
+    public async Task Create_ValidCommand_ReturnsCreated()
     {
         // Arrange
         var command = new CreateProfessionalCommand
@@ -40,7 +43,7 @@ public class ProfessionalsControllerTests
             TimezoneId = Guid.NewGuid()
         };
 
-        var professional = new Professional
+        var response = new CreateProfessionalCommandResponse
         {
             Id = Guid.NewGuid(),
             Name = command.Name,
@@ -56,20 +59,20 @@ public class ProfessionalsControllerTests
         };
 
         _mediatorMock.Setup(m => m.Send(It.IsAny<CreateProfessionalCommand>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(professional);
+            .ReturnsAsync(response);
 
         // Act
         var result = await _controller.Create(command);
 
         // Assert
-        var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result);
+        var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result.Result);
         Assert.Equal(nameof(ProfessionalsController.GetById), createdAtActionResult.ActionName);
-        Assert.Equal(professional.Id, createdAtActionResult.RouteValues["id"]);
-        Assert.Equal(professional, createdAtActionResult.Value);
+        Assert.Equal(response.Id, createdAtActionResult.RouteValues["id"]);
+        Assert.Equal(response, createdAtActionResult.Value);
     }
 
     [Fact]
-    public async Task GetById_WithValidId_ReturnsOkResult()
+    public async Task GetById_ExistingId_ReturnsOk()
     {
         // Arrange
         var id = Guid.NewGuid();
@@ -88,15 +91,17 @@ public class ProfessionalsControllerTests
             UpdatedAt = DateTime.UtcNow
         };
 
+        var response = new GetProfessionalByIdCommandResponse(professional);
+
         _mediatorMock.Setup(m => m.Send(It.IsAny<GetProfessionalByIdCommand>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(professional);
+            .ReturnsAsync(response);
 
         // Act
         var result = await _controller.GetById(id);
 
         // Assert
-        var okResult = Assert.IsType<OkObjectResult>(result);
-        Assert.Equal(professional, okResult.Value);
+        var okResult = Assert.IsType<OkObjectResult>(result.Result);
+        Assert.Equal(response, okResult.Value);
     }
 
     [Fact]
@@ -105,17 +110,17 @@ public class ProfessionalsControllerTests
         // Arrange
         var id = Guid.NewGuid();
         _mediatorMock.Setup(m => m.Send(It.IsAny<GetProfessionalByIdCommand>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync((Professional)null);
+            .ThrowsAsync(new ProfessionalNotFoundException($"Professional with ID {id} not found"));
 
         // Act
         var result = await _controller.GetById(id);
 
         // Assert
-        Assert.IsType<NotFoundResult>(result);
+        Assert.IsType<NotFoundResult>(result.Result);
     }
 
     [Fact]
-    public async Task GetByName_WithValidName_ReturnsOkResult()
+    public async Task GetByName_ExistingName_ReturnsOk()
     {
         // Arrange
         var name = "John Doe";
@@ -141,8 +146,17 @@ public class ProfessionalsControllerTests
         var result = await _controller.GetByName(name);
 
         // Assert
-        var okResult = Assert.IsType<OkObjectResult>(result);
-        Assert.Equal(professional, okResult.Value);
+        var okResult = Assert.IsType<OkObjectResult>(result.Result);
+        var response = Assert.IsType<GetProfessionalByNameCommandResponse>(okResult.Value);
+        Assert.Equal(professional.Id, response.Id);
+        Assert.Equal(professional.Name, response.Name);
+        Assert.Equal(professional.DocumentId, response.DocumentId);
+        Assert.Equal(professional.PhoneNumber, response.PhoneNumber);
+        Assert.Equal(professional.Email, response.Email);
+        Assert.Equal(professional.CurrencyId, response.CurrencyId);
+        Assert.Equal(professional.PhoneCountryCodeId, response.PhoneCountryCodeId);
+        Assert.Equal(professional.PreferredLanguageId, response.PreferredLanguageId);
+        Assert.Equal(professional.TimezoneId, response.TimezoneId);
     }
 
     [Fact]
@@ -151,17 +165,17 @@ public class ProfessionalsControllerTests
         // Arrange
         var name = "Non Existent";
         _mediatorMock.Setup(m => m.Send(It.IsAny<GetProfessionalByNameCommand>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync((Professional)null);
+            .ThrowsAsync(new ProfessionalNotFoundException($"Professional with name {name} not found"));
 
         // Act
         var result = await _controller.GetByName(name);
 
         // Assert
-        Assert.IsType<NotFoundResult>(result);
+        Assert.IsType<NotFoundResult>(result.Result);
     }
 
     [Fact]
-    public async Task Update_WithValidData_ReturnsOkResult()
+    public async Task Update_ValidCommand_ReturnsOk()
     {
         // Arrange
         var id = Guid.NewGuid();
@@ -193,15 +207,17 @@ public class ProfessionalsControllerTests
             UpdatedAt = DateTime.UtcNow
         };
 
+        var response = new UpdateProfessionalCommandResponse(professional);
+
         _mediatorMock.Setup(m => m.Send(It.IsAny<UpdateProfessionalCommand>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(professional);
+            .ReturnsAsync(response);
 
         // Act
         var result = await _controller.Update(id, command);
 
         // Assert
-        var okResult = Assert.IsType<OkObjectResult>(result);
-        Assert.Equal(professional, okResult.Value);
+        var okResult = Assert.IsType<OkObjectResult>(result.Result);
+        Assert.Equal(response, okResult.Value);
     }
 
     [Fact]
@@ -211,7 +227,7 @@ public class ProfessionalsControllerTests
         var id = Guid.NewGuid();
         var command = new UpdateProfessionalCommand
         {
-            Id = Guid.NewGuid(), // Different ID
+            Id = Guid.NewGuid(),
             Name = "John Doe Updated",
             DocumentId = "123456789",
             PhoneNumber = "+5511999999999",
@@ -226,7 +242,7 @@ public class ProfessionalsControllerTests
         var result = await _controller.Update(id, command);
 
         // Assert
-        var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+        var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
         Assert.Equal("ID mismatch", badRequestResult.Value);
     }
 
@@ -249,17 +265,17 @@ public class ProfessionalsControllerTests
         };
 
         _mediatorMock.Setup(m => m.Send(It.IsAny<UpdateProfessionalCommand>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync((Professional)null);
+            .ThrowsAsync(new ProfessionalNotFoundException($"Professional with ID {id} not found"));
 
         // Act
         var result = await _controller.Update(id, command);
 
         // Assert
-        Assert.IsType<NotFoundResult>(result);
+        Assert.IsType<NotFoundResult>(result.Result);
     }
 
     [Fact]
-    public async Task Delete_WithValidId_ReturnsNoContent()
+    public async Task Delete_ExistingId_ReturnsNoContent()
     {
         // Arrange
         var id = Guid.NewGuid();
@@ -274,7 +290,7 @@ public class ProfessionalsControllerTests
     }
 
     [Fact]
-    public async Task Delete_WithInvalidId_ReturnsNotFound()
+    public async Task Delete_NonExistingId_ReturnsNotFound()
     {
         // Arrange
         var id = Guid.NewGuid();

@@ -27,8 +27,16 @@ namespace MSProfessionals.Infrastructure.Extensions
                 options.UseNpgsql(dbSettings.GetConnectionString());
             });
 
+            // Register DbContext interface
+            services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
+
             // Register repositories
             services.AddScoped<IProfessionalRepository, ProfessionalRepository>();
+            services.AddScoped<IProfessionalAddressRepository, ProfessionalAddressRepository>();
+            services.AddScoped<ICountryCodeRepository, CountryCodeRepository>();
+            services.AddScoped<IProfessionalServiceRepository, ProfessionalServiceRepository>();
+            services.AddScoped<IProfessionalProfessionRepository, ProfessionalProfessionRepository>();
+            services.AddScoped<IServiceRepository, ServiceRepository>();
 
             return services;
         }

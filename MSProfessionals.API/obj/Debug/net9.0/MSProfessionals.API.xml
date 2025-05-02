@@ -1,0 +1,169 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>MSProfessionals.API</name>
+    </assembly>
+    <members>
+        <member name="T:MSProfessionals.API.Controllers.AddressesController">
+            <summary>
+            Controller responsável por gerenciar endereços
+            </summary>
+        </member>
+        <member name="M:MSProfessionals.API.Controllers.AddressesController.#ctor(MediatR.IMediator)">
+            <summary>
+            Inicializa uma nova instância do AddressesController
+            </summary>
+            <param name="mediator">Mediador para processamento de comandos</param>
+        </member>
+        <member name="M:MSProfessionals.API.Controllers.AddressesController.Create(MSProfessionals.Application.Commands.ProfessionalAddress.CreateProfessionalAddressCommand)">
+            <summary>
+            Cria um novo endereço
+            </summary>
+            <param name="command">Dados do endereço a ser criado</param>
+            <returns>O endereço criado</returns>
+            <response code="201">Retorna o endereço recém-criado</response>
+            <response code="400">Se os dados do endereço forem inválidos</response>
+            <response code="404">Se o profissional não for encontrado</response>
+            <response code="500">Se ocorrer um erro interno</response>
+        </member>
+        <member name="M:MSProfessionals.API.Controllers.AddressesController.GetById(System.Guid)">
+            <summary>
+            Gets an address by ID
+            </summary>
+            <param name="id">The address ID</param>
+            <returns>The address details</returns>
+            <response code="200">Returns the address details</response>
+            <response code="404">If the address is not found</response>
+            <response code="500">Se ocorrer um erro interno</response>
+        </member>
+        <member name="M:MSProfessionals.API.Controllers.AddressesController.GetByProfessionalId(System.Guid)">
+            <summary>
+            Obtém todos os endereços de um consumidor
+            </summary>
+            <param name="professionalId">ID do profissional</param>
+            <returns>Lista de endereços do profissional</returns>
+            <response code="200">Retorna a lista de endereços</response>
+            <response code="500">Se ocorrer um erro interno</response>
+        </member>
+        <member name="M:MSProfessionals.API.Controllers.AddressesController.Update(MSProfessionals.Application.Commands.ProfessionalAddress.UpdateProfessionalAddressCommand)">
+            <summary>
+            Atualiza um endereço existente
+            </summary>
+            <param name="command">Comando de atualização de endereço</param>
+            <returns>O endereço atualizado</returns>
+        </member>
+        <member name="M:MSProfessionals.API.Controllers.AddressesController.Delete(System.Guid)">
+            <summary>
+            Deletes an address
+            </summary>
+            <param name="id">The address ID</param>
+            <returns>No content if successful</returns>
+        </member>
+        <member name="T:MSProfessionals.API.Controllers.ProfessionalsController">
+            <summary>
+            Controller for managing professionals
+            </summary>
+        </member>
+        <member name="M:MSProfessionals.API.Controllers.ProfessionalsController.#ctor(MediatR.IMediator,Microsoft.Extensions.Logging.ILogger{MSProfessionals.API.Controllers.ProfessionalsController})">
+            <summary>
+            Initializes a new instance of the ProfessionalsController
+            </summary>
+            <param name="mediator">Mediator</param>
+            <param name="logger">Logger</param>
+        </member>
+        <member name="M:MSProfessionals.API.Controllers.ProfessionalsController.Create(MSProfessionals.Application.Commands.Professional.CreateProfessionalCommand,System.Threading.CancellationToken)">
+            <summary>
+            Creates a new professional
+            </summary>
+            <param name="command">Create professional command</param>
+            <param name="cancellationToken">Cancellation token</param>
+            <returns>The created professional</returns>
+        </member>
+        <member name="M:MSProfessionals.API.Controllers.ProfessionalsController.GetById(System.Guid,System.Threading.CancellationToken)">
+            <summary>
+            Gets a professional by ID
+            </summary>
+            <param name="id">Professional ID</param>
+            <param name="cancellationToken">Cancellation token</param>
+            <returns>The found professional</returns>
+        </member>
+        <member name="M:MSProfessionals.API.Controllers.ProfessionalsController.GetByName(System.String)">
+            <summary>
+            Gets a professional by name
+            </summary>
+            <param name="name">Professional name</param>
+            <returns>The found professional</returns>
+        </member>
+        <member name="M:MSProfessionals.API.Controllers.ProfessionalsController.Update(System.Guid,MSProfessionals.Application.Commands.Professional.UpdateProfessionalCommand,System.Threading.CancellationToken)">
+            <summary>
+            Updates a professional
+            </summary>
+            <param name="id">Professional ID</param>
+            <param name="command">Update professional command</param>
+            <param name="cancellationToken">Cancellation token</param>
+            <returns>The updated professional</returns>
+        </member>
+        <member name="M:MSProfessionals.API.Controllers.ProfessionalsController.Delete(System.Guid,System.Threading.CancellationToken)">
+            <summary>
+            Deletes a professional
+            </summary>
+            <param name="id">Professional ID</param>
+            <param name="cancellationToken">Cancellation token</param>
+            <returns>No content</returns>
+        </member>
+        <member name="T:MSProfessionals.API.Controllers.ProfessionalServiceController">
+            <summary>
+            Controller for professional services
+            </summary>
+        </member>
+        <member name="M:MSProfessionals.API.Controllers.ProfessionalServiceController.#ctor(MediatR.IMediator)">
+            <summary>
+            Initializes a new instance of the <see cref="T:MSProfessionals.API.Controllers.ProfessionalServiceController"/> class.
+            </summary>
+            <param name="mediator">Mediator</param>
+        </member>
+        <member name="M:MSProfessionals.API.Controllers.ProfessionalServiceController.GetById(System.Guid,System.Threading.CancellationToken)">
+            <summary>
+            Gets a professional service by ID
+            </summary>
+            <param name="id">Professional service ID</param>
+            <param name="cancellationToken">Cancellation token</param>
+            <returns>The professional service if found</returns>
+        </member>
+        <member name="M:MSProfessionals.API.Controllers.ProfessionalServiceController.Add(MSProfessionals.Application.Commands.ProfessionalService.AddProfessionalServiceCommand,System.Threading.CancellationToken)">
+            <summary>
+            Adds a new professional service
+            </summary>
+            <param name="command">Add professional service command</param>
+            <param name="cancellationToken">Cancellation token</param>
+            <returns>The added professional service</returns>
+        </member>
+        <member name="M:MSProfessionals.API.Controllers.ProfessionalServiceController.Update(System.Guid,MSProfessionals.Application.Commands.ProfessionalService.UpdateProfessionalServiceCommand,System.Threading.CancellationToken)">
+            <summary>
+            Updates an existing professional service
+            </summary>
+            <param name="id">Professional service ID</param>
+            <param name="command">Update professional service command</param>
+            <param name="cancellationToken">Cancellation token</param>
+            <returns>The updated professional service</returns>
+        </member>
+        <member name="T:MSProfessionals.API.Middleware.ExceptionMiddleware">
+            <summary>
+            Middleware for handling exceptions globally
+            </summary>
+        </member>
+        <member name="M:MSProfessionals.API.Middleware.ExceptionMiddleware.#ctor(Microsoft.AspNetCore.Http.RequestDelegate,Microsoft.Extensions.Logging.ILogger{MSProfessionals.API.Middleware.ExceptionMiddleware})">
+            <summary>
+            Initializes a new instance of the ExceptionMiddleware
+            </summary>
+            <param name="next">Next middleware in the pipeline</param>
+            <param name="logger">Logger</param>
+        </member>
+        <member name="M:MSProfessionals.API.Middleware.ExceptionMiddleware.InvokeAsync(Microsoft.AspNetCore.Http.HttpContext)">
+            <summary>
+            Invokes the middleware
+            </summary>
+            <param name="context">HTTP context</param>
+        </member>
+    </members>
+</doc>

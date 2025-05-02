@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using MSProfessionals.Domain.Entities;
 using System.Threading;
-
+using System.Linq.Expressions;
 namespace MSProfessionals.Domain.Interfaces
 {
     /// <summary>
@@ -27,9 +27,16 @@ namespace MSProfessionals.Domain.Interfaces
         Task<Professional?> GetByIdAsync(Guid id);
 
         /// <summary>
+        /// Gets a professional by name
+        /// </summary>
+        /// <param name="name">Professional name</param>
+        /// <returns>The found professional or null</returns>
+        Task<Professional?> GetAsync(Expression<Func<Professional, bool>> predicate, CancellationToken cancellationToken = default);
+
+        /// <summary>
         /// Gets all professionals
         /// </summary>
-        /// <returns>A collection of professionals</returns>
+        /// <returns>List of professionals</returns>
         Task<IEnumerable<Professional>> GetAllAsync();
 
         /// <summary>
@@ -53,5 +60,35 @@ namespace MSProfessionals.Domain.Interfaces
         /// <param name="id">Professional ID</param>
         /// <returns>Task</returns>
         Task DeleteAsync(Guid id);
+
+        /// <summary>
+        /// Gets a profession by name
+        /// </summary>
+        /// <param name="name">Profession name</param>
+        /// <returns>The found profession or null</returns>
+        Task<Profession?> GetProfessionByNameAsync(string name);
+
+        /// <summary>
+        /// Gets a service by name
+        /// </summary>
+        /// <param name="name">Service name</param>
+        /// <returns>The found service or null</returns>
+        Task<Service?> GetServiceByNameAsync(string name);
+
+        /// <summary>
+        /// Adds a new professional profession
+        /// </summary>
+        /// <param name="professionalProfession">Professional profession to add</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Task</returns>
+        Task AddProfessionalProfessionAsync(ProfessionalProfession professionalProfession, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Adds a new professional service
+        /// </summary>
+        /// <param name="professionalService">Professional service to add</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Task</returns>
+        Task AddProfessionalServiceAsync(ProfessionalService professionalService, CancellationToken cancellationToken = default);
     }
 } 
