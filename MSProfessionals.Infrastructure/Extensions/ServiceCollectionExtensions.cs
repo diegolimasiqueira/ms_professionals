@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using MSProfessionals.Infrastructure.Configurations;
 using MSProfessionals.Infrastructure.Context;
 using MSProfessionals.Domain.Interfaces;
@@ -11,24 +10,16 @@ namespace MSProfessionals.Infrastructure.Extensions
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
+            var databaseSettings = configuration.GetSection("DatabaseSettings").Get<DatabaseSettings>();
+            if (databaseSettings == null)
+                throw new InvalidOperationException("DatabaseSettings section is missing in configuration");
             // Configure DatabaseSettings
-            services.Configure<DatabaseSettings>(options =>
-            {
-                configuration.GetSection("DatabaseSettings").Bind(options);
-            });
-            services.AddSingleton(sp => sp.GetRequiredService<IOptions<DatabaseSettings>>().Value);
-
-            // Configure DbContext
-            services.AddDbContext<ApplicationDbContext>((serviceProvider, options) =>
-            {
-                var dbSettings = serviceProvider.GetRequiredService<DatabaseSettings>();
-                options.UseNpgsql(dbSettings.GetConnectionString());
-            });
-
-            // Register DbContext interface
-            services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
+           services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseNpgsql(
+                databaseSettings.GetConnectionString(),
+                b => b.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)));
 
             // Register repositories
             services.AddScoped<IProfessionalRepository, ProfessionalRepository>();
@@ -37,8 +28,9 @@ namespace MSProfessionals.Infrastructure.Extensions
             services.AddScoped<IProfessionalServiceRepository, ProfessionalServiceRepository>();
             services.AddScoped<IProfessionalProfessionRepository, ProfessionalProfessionRepository>();
             services.AddScoped<IServiceRepository, ServiceRepository>();
+            services.AddScoped<IProfessionRepository, ProfessionRepository>();            
 
             return services;
         }
     }
-} 
+}

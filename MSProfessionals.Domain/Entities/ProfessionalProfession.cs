@@ -1,3 +1,5 @@
+using System;
+
 namespace MSProfessionals.Domain.Entities;
 
 /// <summary>
@@ -31,6 +33,11 @@ public class ProfessionalProfession
     public Profession Profession { get; set; } = null!;
 
     /// <summary>
+    /// Whether this is the main profession
+    /// </summary>
+    public bool IsMain { get; set; }
+
+    /// <summary>
     /// Creation date
     /// </summary>
     public DateTime CreatedAt { get; set; }
@@ -38,7 +45,7 @@ public class ProfessionalProfession
     /// <summary>
     /// Last update date
     /// </summary>
-    public DateTime UpdatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
 
     /// <summary>
     /// Collection of professional services

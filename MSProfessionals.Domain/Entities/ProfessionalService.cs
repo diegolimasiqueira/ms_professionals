@@ -1,3 +1,5 @@
+using System;
+
 namespace MSProfessionals.Domain.Entities;
 
 /// <summary>
@@ -11,12 +13,22 @@ public class ProfessionalService
     public Guid Id { get; set; }
 
     /// <summary>
+    /// Professional ID
+    /// </summary>
+    public Guid ProfessionalId { get; set; }
+
+    /// <summary>
+    /// Professional navigation property
+    /// </summary>
+    public Professional Professional { get; set; } = null!;
+
+    /// <summary>
     /// Professional profession ID
     /// </summary>
     public Guid ProfessionalProfessionId { get; set; }
 
     /// <summary>
-    /// Professional profession
+    /// Professional profession navigation property
     /// </summary>
     public ProfessionalProfession ProfessionalProfession { get; set; } = null!;
 
@@ -26,9 +38,14 @@ public class ProfessionalService
     public Guid ServiceId { get; set; }
 
     /// <summary>
-    /// Service
+    /// Service navigation property
     /// </summary>
     public Service Service { get; set; } = null!;
+
+    /// <summary>
+    /// Indicates if this is the default service
+    /// </summary>
+    public bool IsDefault { get; set; }
 
     /// <summary>
     /// Creation date
@@ -38,5 +55,5 @@ public class ProfessionalService
     /// <summary>
     /// Last update date
     /// </summary>
-    public DateTime UpdatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
 } 

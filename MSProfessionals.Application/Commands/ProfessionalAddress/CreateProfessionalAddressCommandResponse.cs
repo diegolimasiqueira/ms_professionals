@@ -65,7 +65,7 @@ public class CreateProfessionalAddressCommandResponse
     /// <summary>
     /// Last update date
     /// </summary>
-    public DateTime UpdatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
 
     /// <summary>
     /// Initializes a new instance of the CreateProfessionalAddressCommandResponse

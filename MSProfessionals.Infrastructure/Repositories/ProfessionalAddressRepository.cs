@@ -14,13 +14,13 @@ namespace MSProfessionals.Infrastructure.Repositories;
 /// </summary>
 public class ProfessionalAddressRepository : IProfessionalAddressRepository
 {
-    private readonly IApplicationDbContext _context;
+    private readonly ApplicationDbContext _context;
 
     /// <summary>
     /// Initializes a new instance of the ProfessionalAddressRepository
     /// </summary>
     /// <param name="context">Application database context</param>
-    public ProfessionalAddressRepository(IApplicationDbContext context)
+    public ProfessionalAddressRepository(ApplicationDbContext context)
     {
         _context = context;
     }

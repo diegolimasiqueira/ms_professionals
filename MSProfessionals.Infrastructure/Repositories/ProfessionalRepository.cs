@@ -15,13 +15,13 @@ namespace MSProfessionals.Infrastructure.Repositories;
 /// </summary>
 public class ProfessionalRepository : IProfessionalRepository
 {
-    private readonly IApplicationDbContext _context;
+    private readonly ApplicationDbContext _context;
 
     /// <summary>
     /// Initializes a new instance of the ProfessionalRepository
     /// </summary>
     /// <param name="context">Database context</param>
-    public ProfessionalRepository(IApplicationDbContext context)
+    public ProfessionalRepository(ApplicationDbContext context)
     {
         _context = context;
     }
@@ -39,7 +39,7 @@ public class ProfessionalRepository : IProfessionalRepository
     }
 
     /// <inheritdoc />
-    public async Task<Professional?> GetByIdAsync(Guid id)
+    public async Task<Professional?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return await _context.Professionals
             .Include(p => p.ProfessionalProfessions)
@@ -47,11 +47,11 @@ public class ProfessionalRepository : IProfessionalRepository
             .Include(p => p.ProfessionalProfessions)
                 .ThenInclude(pp => pp.ProfessionalServices)
                     .ThenInclude(ps => ps.Service)
-            .FirstOrDefaultAsync(p => p.Id == id);
+            .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
     }
 
     /// <inheritdoc />
-    public async Task<Professional?> GetByNameAsync(string name)
+    public async Task<Professional?> GetByNameAsync(string name, CancellationToken cancellationToken = default)
     {
         return await _context.Professionals
             .Include(p => p.ProfessionalProfessions)
@@ -59,11 +59,11 @@ public class ProfessionalRepository : IProfessionalRepository
             .Include(p => p.ProfessionalProfessions)
                 .ThenInclude(pp => pp.ProfessionalServices)
                     .ThenInclude(ps => ps.Service)
-            .FirstOrDefaultAsync(p => p.Name == name);
+            .FirstOrDefaultAsync(p => p.Name == name, cancellationToken);
     }
 
     /// <inheritdoc />
-    public async Task<IEnumerable<Professional>> GetAllAsync()
+    public async Task<IEnumerable<Professional>> GetAllAsync(CancellationToken cancellationToken = default)
     {
         return await _context.Professionals
             .Include(p => p.ProfessionalProfessions)
@@ -71,7 +71,7 @@ public class ProfessionalRepository : IProfessionalRepository
             .Include(p => p.ProfessionalProfessions)
                 .ThenInclude(pp => pp.ProfessionalServices)
                     .ThenInclude(ps => ps.Service)
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
     }
 
     /// <inheritdoc />
@@ -82,20 +82,20 @@ public class ProfessionalRepository : IProfessionalRepository
     }
 
     /// <inheritdoc />
-    public async Task UpdateAsync(Professional professional)
+    public async Task UpdateAsync(Professional professional, CancellationToken cancellationToken = default)
     {
         _context.Professionals.Update(professional);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(cancellationToken);
     }
 
     /// <inheritdoc />
-    public async Task DeleteAsync(Guid id)
+    public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var professional = await GetByIdAsync(id);
+        var professional = await GetByIdAsync(id, cancellationToken);
         if (professional != null)
         {
             _context.Professionals.Remove(professional);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
         }
     }
 
@@ -115,22 +115,24 @@ public class ProfessionalRepository : IProfessionalRepository
     /// Gets a profession by name
     /// </summary>
     /// <param name="name">Profession name</param>
+    /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>The found profession or null</returns>
-    public async Task<Profession?> GetProfessionByNameAsync(string name)
+    public async Task<Profession?> GetProfessionByNameAsync(string name, CancellationToken cancellationToken = default)
     {
         return await _context.Professions
-            .FirstOrDefaultAsync(p => p.Name == name);
+            .FirstOrDefaultAsync(p => p.Name == name, cancellationToken);
     }
 
     /// <summary>
     /// Gets a service by name
     /// </summary>
     /// <param name="name">Service name</param>
+    /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>The found service or null</returns>
-    public async Task<Service?> GetServiceByNameAsync(string name)
+    public async Task<Service?> GetServiceByNameAsync(string name, CancellationToken cancellationToken = default)
     {
         return await _context.Services
-            .FirstOrDefaultAsync(s => s.Name == name);
+            .FirstOrDefaultAsync(s => s.Name == name, cancellationToken);
     }
 
     /// <summary>

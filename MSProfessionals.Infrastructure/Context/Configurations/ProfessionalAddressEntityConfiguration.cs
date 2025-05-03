@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using MSProfessionals.Domain.Entities;
 
-namespace MSProfessionals.Infrastructure.Data.Configurations;
+namespace MSProfessionals.Infrastructure.Context.Configurations;
 
 public class ProfessionalAddressEntityConfiguration : IEntityTypeConfiguration<ProfessionalAddress>
 {
@@ -24,14 +24,14 @@ public class ProfessionalAddressEntityConfiguration : IEntityTypeConfiguration<P
         builder.Property(e => e.UpdatedAt).HasColumnName("updated_at").IsRequired();
         builder.Property(e => e.CountryId).HasColumnName("country_id").IsRequired();
 
-        builder.HasOne<Professional>(e => e.Professional)
-            .WithMany(c => c.Addresses)
+        builder.HasOne(e => e.Professional)
+            .WithMany(p => p.Addresses)
             .HasForeignKey(e => e.ProfessionalId)
             .HasConstraintName("FK_tb_professional_address_professional_id")
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasOne<CountryCode>(e => e.Country)
-            .WithMany(c => c.Addresses)
+        builder.HasOne(e => e.Country)
+            .WithMany()
             .HasForeignKey(e => e.CountryId)
             .HasConstraintName("FK_tb_professional_address_country_id")
             .OnDelete(DeleteBehavior.Restrict);

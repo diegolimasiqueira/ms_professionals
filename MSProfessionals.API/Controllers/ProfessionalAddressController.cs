@@ -2,110 +2,122 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using MSProfessionals.Application.Commands.ProfessionalAddress;
 using System.ComponentModel.DataAnnotations;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MSProfessionals.API.Controllers;
 
 /// <summary>
-/// Controller responsável por gerenciar endereços
+/// Controller for managing professional addresses
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
-public class AddressesController : ControllerBase
+public class ProfessionalAddressController : ControllerBase
 {
     private readonly IMediator _mediator;
 
     /// <summary>
-    /// Inicializa uma nova instância do AddressesController
+    /// Initializes a new instance of the ProfessionalAddressController
     /// </summary>
-    /// <param name="mediator">Mediador para processamento de comandos</param>
-    public AddressesController(IMediator mediator)
+    /// <param name="mediator">Mediator for command processing</param>
+    public ProfessionalAddressController(IMediator mediator)
     {
         _mediator = mediator;
     }
 
     /// <summary>
-    /// Cria um novo endereço
+    /// Creates a new professional address
     /// </summary>
-    /// <param name="command">Dados do endereço a ser criado</param>
-    /// <returns>O endereço criado</returns>
-    /// <response code="201">Retorna o endereço recém-criado</response>
-    /// <response code="400">Se os dados do endereço forem inválidos</response>
-    /// <response code="404">Se o profissional não for encontrado</response>
-    /// <response code="500">Se ocorrer um erro interno</response>
+    /// <param name="command">Professional address data</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>The created professional address</returns>
+    /// <response code="201">Returns the newly created professional address</response>
+    /// <response code="400">If the professional address data is invalid</response>
+    /// <response code="404">If the professional or country is not found</response>
+    /// <response code="500">If an internal error occurs</response>
     [HttpPost]
     [ProducesResponseType(typeof(CreateProfessionalAddressCommandResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> Create([FromBody] CreateProfessionalAddressCommand command)
+    public async Task<IActionResult> Create([FromBody] CreateProfessionalAddressCommand command, CancellationToken cancellationToken = default)
     {
-        var result = await _mediator.Send(command);
+        var result = await _mediator.Send(command, cancellationToken);
         return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
     }
 
     /// <summary>
-    /// Gets an address by ID
+    /// Gets a professional address by ID
     /// </summary>
-    /// <param name="id">The address ID</param>
-    /// <returns>The address details</returns>
-    /// <response code="200">Returns the address details</response>
-    /// <response code="404">If the address is not found</response>
-    /// <response code="500">Se ocorrer um erro interno</response>
+    /// <param name="id">Professional address ID</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>The found professional address</returns>
+    /// <response code="200">Returns the found professional address</response>
+    /// <response code="404">If the professional address is not found</response>
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(GetProfessionalAddressByIdCommandResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetById(Guid id)
+    public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken = default)
     {
         var command = new GetProfessionalAddressByIdCommand { Id = id };
-        var result = await _mediator.Send(command);
+        var result = await _mediator.Send(command, cancellationToken);
         return Ok(result);
     }
 
     /// <summary>
-    /// Obtém todos os endereços de um consumidor
+    /// Gets all addresses for a professional
     /// </summary>
-    /// <param name="professionalId">ID do profissional</param>
-    /// <returns>Lista de endereços do profissional</returns>
-    /// <response code="200">Retorna a lista de endereços</response>
-    /// <response code="500">Se ocorrer um erro interno</response>
+    /// <param name="professionalId">Professional ID</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>List of professional addresses</returns>
+    /// <response code="200">Returns the list of addresses</response>
+    /// <response code="404">If the professional is not found</response>
     [HttpGet("professional/{professionalId}")]
     [ProducesResponseType(typeof(IEnumerable<GetProfessionalAddressByIdCommandResponse>), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetByProfessionalId([Required] Guid professionalId)
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetByProfessionalId([Required] Guid professionalId, CancellationToken cancellationToken = default)
     {
-        var command = new GetProfessionalAddressByIdCommand { Id = professionalId };
-        var result = await _mediator.Send(command);
+        var command = new GetProfessionalAddressesByProfessionalIdCommand { ProfessionalId = professionalId };
+        var result = await _mediator.Send(command, cancellationToken);
         return Ok(result);
     }
 
     /// <summary>
-    /// Atualiza um endereço existente
+    /// Updates a professional address
     /// </summary>
-    /// <param name="command">Comando de atualização de endereço</param>
-    /// <returns>O endereço atualizado</returns>
+    /// <param name="command">Professional address data</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>The updated professional address</returns>
+    /// <response code="200">Returns the updated professional address</response>
+    /// <response code="400">If the professional address data is invalid</response>
+    /// <response code="404">If the professional address or country is not found</response>
     [HttpPut]
     [ProducesResponseType(typeof(UpdateProfessionalAddressCommandResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<UpdateProfessionalAddressCommandResponse>> Update([FromBody] UpdateProfessionalAddressCommand command)
+    public async Task<IActionResult> Update([FromBody] UpdateProfessionalAddressCommand command, CancellationToken cancellationToken = default)
     {
-        var response = await _mediator.Send(command);
-        return Ok(response);
+        var result = await _mediator.Send(command, cancellationToken);
+        return Ok(result);
     }
 
     /// <summary>
-    /// Deletes an address
+    /// Deletes a professional address
     /// </summary>
-    /// <param name="id">The address ID</param>
-    /// <returns>No content if successful</returns>
+    /// <param name="id">Professional address ID</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>No content</returns>
+    /// <response code="204">If the professional address was successfully deleted</response>
+    /// <response code="404">If the professional address is not found</response>
+    /// <response code="400">If the professional address cannot be deleted due to constraints</response>
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Delete(Guid id)
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken = default)
     {
         var command = new DeleteProfessionalAddressCommand { Id = id };
-        await _mediator.Send(command);
+        await _mediator.Send(command, cancellationToken);
         return NoContent();
     }
 } 

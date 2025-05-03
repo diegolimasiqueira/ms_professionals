@@ -1,8 +1,8 @@
 using System;
-using System.ComponentModel.DataAnnotations;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using MSProfessionals.Domain.Entities;
 using MSProfessionals.Domain.Interfaces;
 using MSProfessionals.Domain.Exceptions;
@@ -10,7 +10,7 @@ using MSProfessionals.Domain.Exceptions;
 namespace MSProfessionals.Application.Commands.Professional;
 
 /// <summary>
-/// Handler for the update professional command
+/// Handler for the UpdateProfessionalCommand
 /// </summary>
 public class UpdateProfessionalCommandHandler : IRequestHandler<UpdateProfessionalCommand, UpdateProfessionalCommandResponse>
 {
@@ -22,45 +22,72 @@ public class UpdateProfessionalCommandHandler : IRequestHandler<UpdateProfession
     /// <param name="professionalRepository">Professional repository</param>
     public UpdateProfessionalCommandHandler(IProfessionalRepository professionalRepository)
     {
-        _professionalRepository = professionalRepository;
+        _professionalRepository = professionalRepository ?? throw new ArgumentNullException(nameof(professionalRepository));
     }
 
     /// <summary>
-    /// Handles the update professional command
+    /// Handles the update of a professional
     /// </summary>
-    /// <param name="request">The command request</param>
+    /// <param name="request">Update professional command</param>
     /// <param name="cancellationToken">Cancellation token</param>
-    /// <returns>The updated professional response</returns>
-    /// <exception cref="ArgumentException">Thrown when the ID is empty</exception>
-    /// <exception cref="ProfessionalNotFoundException">Thrown when the professional is not found</exception>
+    /// <returns>The updated professional</returns>
     public async Task<UpdateProfessionalCommandResponse> Handle(UpdateProfessionalCommand request, CancellationToken cancellationToken)
     {
-        if (request.Id == Guid.Empty)
+        try
         {
-            throw new ArgumentException("Professional ID cannot be empty", nameof(request.Id));
-        }
+            // Validate request
+            if (request == null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
 
-        var professional = await _professionalRepository.GetByIdAsync(request.Id);
-        
-        if (professional == null)
+            // Get existing professional
+            var professional = await _professionalRepository.GetByIdAsync(request.Id);
+            if (professional == null)
+            {
+                throw new ProfessionalNotFoundException($"Professional with ID {request.Id} not found");
+            }
+
+            // Check if email is being changed and if it already exists
+            if (professional.Email != request.Email)
+            {
+                var existingProfessional = await _professionalRepository.GetByEmailAsync(request.Email, cancellationToken);
+                if (existingProfessional != null)
+                {
+                    throw new UniqueConstraintViolationException("Email", request.Email);
+                }
+            }
+
+            // Update professional
+            professional.Name = request.Name;
+            professional.DocumentId = request.DocumentId;
+            professional.PhoneNumber = request.PhoneNumber;
+            professional.Email = request.Email;
+            professional.CurrencyId = request.CurrencyId;
+            professional.PhoneCountryCodeId = request.PhoneCountryCodeId;
+            professional.PreferredLanguageId = request.PreferredLanguageId;
+            professional.TimezoneId = request.TimezoneId;
+            professional.SocialMedia = request.SocialMedia;
+            professional.Media = request.Media;
+            professional.UpdatedAt = DateTime.UtcNow;
+
+            // Save changes
+            await _professionalRepository.UpdateAsync(professional);
+
+            // Return response
+            return new UpdateProfessionalCommandResponse(professional);
+        }
+        catch (System.ComponentModel.DataAnnotations.ValidationException ex)
         {
-            throw new ProfessionalNotFoundException($"Professional with ID {request.Id} not found");
+            throw new Domain.Exceptions.ValidationException($"Validation failed: {ex.Message}", ex);
         }
-
-        professional.Name = request.Name;
-        professional.DocumentId = request.DocumentId;
-        professional.PhoneNumber = request.PhoneNumber;
-        professional.Email = request.Email;
-        professional.CurrencyId = request.CurrencyId;
-        professional.PhoneCountryCodeId = request.PhoneCountryCodeId;
-        professional.PreferredLanguageId = request.PreferredLanguageId;
-        professional.TimezoneId = request.TimezoneId;
-        professional.SocialMedia = request.SocialMedia;
-        professional.Media = request.Media;
-        professional.UpdatedAt = DateTime.UtcNow;
-
-        await _professionalRepository.UpdateAsync(professional);
-
-        return new UpdateProfessionalCommandResponse(professional);
+        catch (DbUpdateException ex)
+        {
+            throw new InvalidOperationException("Failed to update professional due to database error", ex);
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException("An unexpected error occurred while updating the professional", ex);
+        }
     }
 } 

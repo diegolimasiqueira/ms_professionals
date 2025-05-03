@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using MSProfessionals.Domain.Entities;
 using MSProfessionals.Domain.Interfaces;
 using MSProfessionals.Domain.Exceptions;
@@ -22,7 +23,7 @@ public class CreateProfessionalCommandHandler : IRequestHandler<CreateProfession
     /// <param name="professionalRepository">Professional repository</param>
     public CreateProfessionalCommandHandler(IProfessionalRepository professionalRepository)
     {
-        _professionalRepository = professionalRepository;
+        _professionalRepository = professionalRepository ?? throw new ArgumentNullException(nameof(professionalRepository));
     }
 
     /// <summary>
@@ -33,16 +34,22 @@ public class CreateProfessionalCommandHandler : IRequestHandler<CreateProfession
     /// <returns>The created professional</returns>
     public async Task<CreateProfessionalCommandResponse> Handle(CreateProfessionalCommand request, CancellationToken cancellationToken)
     {
-        // Validate the request using DataAnnotations
-        Validator.ValidateObject(request, new ValidationContext(request), validateAllProperties: true);
+        try
+        {
+            // Validate request
+            if (request == null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
 
-        // Check if email already exists
+            // Check if professional with same email already exists
         var existingProfessional = await _professionalRepository.GetByEmailAsync(request.Email, cancellationToken);
         if (existingProfessional != null)
         {
             throw new UniqueConstraintViolationException("Email", request.Email);
         }
 
+            // Create new professional
         var professional = new Domain.Entities.Professional
         {
             Id = Guid.NewGuid(),
@@ -51,18 +58,19 @@ public class CreateProfessionalCommandHandler : IRequestHandler<CreateProfession
             PhotoUrl = request.PhotoUrl,
             PhoneNumber = request.PhoneNumber,
             Email = request.Email,
+                SocialMedia = request.SocialMedia,
+                Media = request.Media,
             CurrencyId = request.CurrencyId,
             PhoneCountryCodeId = request.PhoneCountryCodeId,
             PreferredLanguageId = request.PreferredLanguageId,
             TimezoneId = request.TimezoneId,
-            SocialMedia = request.SocialMedia,
-            Media = request.Media,
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow
         };
 
+            // Save professional
         await _professionalRepository.AddAsync(professional, cancellationToken);
 
+            // Return response
         return new CreateProfessionalCommandResponse
         {
             Id = professional.Id,
@@ -71,6 +79,8 @@ public class CreateProfessionalCommandHandler : IRequestHandler<CreateProfession
             PhotoUrl = professional.PhotoUrl,
             PhoneNumber = professional.PhoneNumber,
             Email = professional.Email,
+                SocialMedia = professional.SocialMedia,
+                Media = professional.Media,
             CurrencyId = professional.CurrencyId,
             PhoneCountryCodeId = professional.PhoneCountryCodeId,
             PreferredLanguageId = professional.PreferredLanguageId,
@@ -78,5 +88,18 @@ public class CreateProfessionalCommandHandler : IRequestHandler<CreateProfession
             CreatedAt = professional.CreatedAt,
             UpdatedAt = professional.UpdatedAt
         };
+        }
+        catch (System.ComponentModel.DataAnnotations.ValidationException ex)
+        {
+            throw new Domain.Exceptions.ValidationException($"Validation failed: {ex.Message}", ex);
+        }
+        catch (DbUpdateException ex)
+        {
+            throw new InvalidOperationException("Failed to create professional due to database error", ex);
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException("An unexpected error occurred while creating the professional", ex);
+        }
     }
 } 

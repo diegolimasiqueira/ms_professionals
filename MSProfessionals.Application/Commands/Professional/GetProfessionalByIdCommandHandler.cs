@@ -1,5 +1,4 @@
 using System;
-using System.ComponentModel.DataAnnotations;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -22,7 +21,7 @@ public class GetProfessionalByIdCommandHandler : IRequestHandler<GetProfessional
     /// <param name="professionalRepository">Professional repository</param>
     public GetProfessionalByIdCommandHandler(IProfessionalRepository professionalRepository)
     {
-        _professionalRepository = professionalRepository;
+        _professionalRepository = professionalRepository ?? throw new ArgumentNullException(nameof(professionalRepository));
     }
 
     /// <summary>
@@ -33,15 +32,36 @@ public class GetProfessionalByIdCommandHandler : IRequestHandler<GetProfessional
     /// <returns>The found professional</returns>
     public async Task<GetProfessionalByIdCommandResponse> Handle(GetProfessionalByIdCommand request, CancellationToken cancellationToken)
     {
-        // Validate the request using DataAnnotations
-        Validator.ValidateObject(request, new ValidationContext(request), validateAllProperties: true);
-
-        var professional = await _professionalRepository.GetByIdAsync(request.Id);
-        if (professional == null)
+        try
         {
-            throw new ProfessionalNotFoundException($"Professional with ID {request.Id} not found");
-        }
+            // Validate request
+            if (request == null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
 
-        return new GetProfessionalByIdCommandResponse(professional);
+            if (request.Id == Guid.Empty)
+            {
+                throw new ArgumentException("Professional ID cannot be empty", nameof(request.Id));
+            }
+
+            // Get professional
+            var professional = await _professionalRepository.GetByIdAsync(request.Id);
+            if (professional == null)
+            {
+                throw new ProfessionalNotFoundException($"Professional with ID {request.Id} not found");
+            }
+
+            // Return response
+            return new GetProfessionalByIdCommandResponse(professional);
+        }
+        catch (ProfessionalNotFoundException)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException("An unexpected error occurred while retrieving the professional", ex);
+        }
     }
 } 

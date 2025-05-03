@@ -3,6 +3,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
+using Npgsql;
 using MSProfessionals.Domain.Entities;
 using MSProfessionals.Domain.Interfaces;
 using MSProfessionals.Domain.Exceptions;
@@ -66,14 +68,33 @@ public class UpdateProfessionalServiceCommandHandler : IRequestHandler<UpdatePro
             throw new ServiceNotFoundException($"Service with ID {request.ServiceId} not found");
         }
 
-        // Update the professional service
-        professionalService.ProfessionalProfessionId = request.ProfessionalProfessionId;
-        professionalService.ServiceId = request.ServiceId;
-        professionalService.UpdatedAt = DateTime.UtcNow;
+        try
+        {
+            // Update the professional service
+            professionalService.ProfessionalProfessionId = request.ProfessionalProfessionId;
+            professionalService.ServiceId = request.ServiceId;
+            professionalService.UpdatedAt = DateTime.UtcNow;
 
-        // Save the changes
-        await _professionalServiceRepository.UpdateAsync(professionalService, cancellationToken);
+            // Save the changes
+            await _professionalServiceRepository.UpdateAsync(professionalService, cancellationToken);
 
-        return new UpdateProfessionalServiceCommandResponse(professionalService);
+            return new UpdateProfessionalServiceCommandResponse(professionalService);
+        }
+        catch (DbUpdateException ex)
+        {
+            if (ex.InnerException is PostgresException pgEx)
+            {
+                switch (pgEx.SqlState)
+                {
+                    case "23503": // Foreign key violation
+                        throw new InvalidOperationException($"Cannot update professional service with ID {request.Id} because the referenced entity does not exist");
+                    case "23505": // Unique constraint violation
+                        throw new InvalidOperationException($"Cannot update professional service with ID {request.Id} because it violates a unique constraint");
+                    default:
+                        throw;
+                }
+            }
+            throw;
+        }
     }
 } 

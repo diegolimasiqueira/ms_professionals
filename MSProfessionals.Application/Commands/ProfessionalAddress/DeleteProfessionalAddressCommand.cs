@@ -5,13 +5,13 @@ using MediatR;
 namespace MSProfessionals.Application.Commands.ProfessionalAddress;
 
 /// <summary>
-/// Command para deletar um endereço
+/// Command to delete a professional address
 /// </summary>
 public class DeleteProfessionalAddressCommand : IRequest<Unit>
 {
     /// <summary>
-    /// ID do endereço
+    /// Professional address ID
     /// </summary>
-    [Required]
+    [Required(ErrorMessage = "Professional address ID is required")]
     public Guid Id { get; set; }
 } 

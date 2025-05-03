@@ -16,7 +16,7 @@ public interface IProfessionalProfessionRepository
     /// </summary>
     /// <param name="id">Professional profession ID</param>
     /// <param name="cancellationToken">Cancellation token</param>
-    /// <returns>The professional profession if found, null otherwise</returns>
+    /// <returns>The professional profession if found</returns>
     Task<ProfessionalProfession?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -36,14 +36,22 @@ public interface IProfessionalProfessionRepository
     Task<IEnumerable<ProfessionalProfession>> GetByProfessionIdAsync(Guid professionId, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Adds a new professional profession
+    /// Gets the main profession for a professional
+    /// </summary>
+    /// <param name="professionalId">Professional ID</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>The main profession if found</returns>
+    Task<ProfessionalProfession?> GetMainByProfessionalIdAsync(Guid professionalId, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Adds a professional profession
     /// </summary>
     /// <param name="professionalProfession">Professional profession to add</param>
     /// <param name="cancellationToken">Cancellation token</param>
     Task AddAsync(ProfessionalProfession professionalProfession, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Updates an existing professional profession
+    /// Updates a professional profession
     /// </summary>
     /// <param name="professionalProfession">Professional profession to update</param>
     /// <param name="cancellationToken">Cancellation token</param>
@@ -55,4 +63,11 @@ public interface IProfessionalProfessionRepository
     /// <param name="professionalProfession">Professional profession to delete</param>
     /// <param name="cancellationToken">Cancellation token</param>
     Task DeleteAsync(ProfessionalProfession professionalProfession, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Saves all changes made in this context to the database
+    /// </summary>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>The number of state entries written to the database</returns>
+    Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 } 

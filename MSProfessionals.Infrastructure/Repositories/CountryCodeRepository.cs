@@ -14,13 +14,13 @@ namespace MSProfessionals.Infrastructure.Repositories;
 /// </summary>
 public class CountryCodeRepository : ICountryCodeRepository
 {
-    private readonly IApplicationDbContext _context;
+    private readonly ApplicationDbContext _context;
 
     /// <summary>
     /// Initializes a new instance of the CountryCodeRepository
     /// </summary>
     /// <param name="context">Application database context</param>
-    public CountryCodeRepository(IApplicationDbContext context)
+    public CountryCodeRepository(ApplicationDbContext context)
     {
         _context = context;
     }

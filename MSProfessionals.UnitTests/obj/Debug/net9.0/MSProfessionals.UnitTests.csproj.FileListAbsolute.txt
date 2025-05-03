@@ -1,5 +1,11 @@
 E:\git\ms_professionals\MSProfessionals.UnitTests\bin\Debug\net9.0\.msCoverageSourceRootsMapping_MSProfessionals.UnitTests
 E:\git\ms_professionals\MSProfessionals.UnitTests\bin\Debug\net9.0\CoverletSourceRootsMapping_MSProfessionals.UnitTests
+E:\git\ms_professionals\MSProfessionals.UnitTests\obj\Debug\net9.0\MSProfessionals.UnitTests.csproj.AssemblyReference.cache
+E:\git\ms_professionals\MSProfessionals.UnitTests\obj\Debug\net9.0\MSProfessionals.UnitTests.GeneratedMSBuildEditorConfig.editorconfig
+E:\git\ms_professionals\MSProfessionals.UnitTests\obj\Debug\net9.0\MSProfessionals.UnitTests.AssemblyInfoInputs.cache
+E:\git\ms_professionals\MSProfessionals.UnitTests\obj\Debug\net9.0\MSProfessionals.UnitTests.AssemblyInfo.cs
+E:\git\ms_professionals\MSProfessionals.UnitTests\obj\Debug\net9.0\MSProfessionals.UnitTests.csproj.CoreCompileInputs.cache
+E:\git\ms_professionals\MSProfessionals.UnitTests\obj\Debug\net9.0\MSProfessionals.UnitTests.sourcelink.json
 E:\git\ms_professionals\MSProfessionals.UnitTests\bin\Debug\net9.0\testhost.dll
 E:\git\ms_professionals\MSProfessionals.UnitTests\bin\Debug\net9.0\MSProfessionals.API.deps.json
 E:\git\ms_professionals\MSProfessionals.UnitTests\bin\Debug\net9.0\MSProfessionals.API.runtimeconfig.json
@@ -40,6 +46,12 @@ E:\git\ms_professionals\MSProfessionals.UnitTests\bin\Debug\net9.0\Microsoft.Ext
 E:\git\ms_professionals\MSProfessionals.UnitTests\bin\Debug\net9.0\Microsoft.Extensions.Configuration.Binder.dll
 E:\git\ms_professionals\MSProfessionals.UnitTests\bin\Debug\net9.0\Microsoft.Extensions.DependencyInjection.dll
 E:\git\ms_professionals\MSProfessionals.UnitTests\bin\Debug\net9.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+E:\git\ms_professionals\MSProfessionals.UnitTests\bin\Debug\net9.0\Microsoft.Extensions.Diagnostics.Abstractions.dll
+E:\git\ms_professionals\MSProfessionals.UnitTests\bin\Debug\net9.0\Microsoft.Extensions.Diagnostics.HealthChecks.dll
+E:\git\ms_professionals\MSProfessionals.UnitTests\bin\Debug\net9.0\Microsoft.Extensions.Diagnostics.HealthChecks.Abstractions.dll
+E:\git\ms_professionals\MSProfessionals.UnitTests\bin\Debug\net9.0\Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore.dll
+E:\git\ms_professionals\MSProfessionals.UnitTests\bin\Debug\net9.0\Microsoft.Extensions.FileProviders.Abstractions.dll
+E:\git\ms_professionals\MSProfessionals.UnitTests\bin\Debug\net9.0\Microsoft.Extensions.Hosting.Abstractions.dll
 E:\git\ms_professionals\MSProfessionals.UnitTests\bin\Debug\net9.0\Microsoft.Extensions.Logging.dll
 E:\git\ms_professionals\MSProfessionals.UnitTests\bin\Debug\net9.0\Microsoft.Extensions.Logging.Abstractions.dll
 E:\git\ms_professionals\MSProfessionals.UnitTests\bin\Debug\net9.0\Microsoft.Extensions.Options.dll
@@ -145,12 +157,6 @@ E:\git\ms_professionals\MSProfessionals.UnitTests\bin\Debug\net9.0\MSProfessiona
 E:\git\ms_professionals\MSProfessionals.UnitTests\bin\Debug\net9.0\MSProfessionals.API.pdb
 E:\git\ms_professionals\MSProfessionals.UnitTests\bin\Debug\net9.0\MSProfessionals.API.xml
 E:\git\ms_professionals\MSProfessionals.UnitTests\bin\Debug\net9.0\MSProfessionals.Application.pdb
-E:\git\ms_professionals\MSProfessionals.UnitTests\obj\Debug\net9.0\MSProfessionals.UnitTests.csproj.AssemblyReference.cache
-E:\git\ms_professionals\MSProfessionals.UnitTests\obj\Debug\net9.0\MSProfessionals.UnitTests.GeneratedMSBuildEditorConfig.editorconfig
-E:\git\ms_professionals\MSProfessionals.UnitTests\obj\Debug\net9.0\MSProfessionals.UnitTests.AssemblyInfoInputs.cache
-E:\git\ms_professionals\MSProfessionals.UnitTests\obj\Debug\net9.0\MSProfessionals.UnitTests.AssemblyInfo.cs
-E:\git\ms_professionals\MSProfessionals.UnitTests\obj\Debug\net9.0\MSProfessionals.UnitTests.csproj.CoreCompileInputs.cache
-E:\git\ms_professionals\MSProfessionals.UnitTests\obj\Debug\net9.0\MSProfessionals.UnitTests.sourcelink.json
 E:\git\ms_professionals\MSProfessionals.UnitTests\obj\Debug\net9.0\MSProfes.F9AAB3E8.Up2Date
 E:\git\ms_professionals\MSProfessionals.UnitTests\obj\Debug\net9.0\MSProfessionals.UnitTests.dll
 E:\git\ms_professionals\MSProfessionals.UnitTests\obj\Debug\net9.0\refint\MSProfessionals.UnitTests.dll

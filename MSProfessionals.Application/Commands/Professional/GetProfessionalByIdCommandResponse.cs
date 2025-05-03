@@ -76,7 +76,7 @@ public class GetProfessionalByIdCommandResponse
     /// <summary>
     /// Professional's last update date
     /// </summary>
-    public DateTime UpdatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
 
     /// <summary>
     /// Initializes a new instance of the GetProfessionalByIdCommandResponse

@@ -4,71 +4,81 @@
         <name>MSProfessionals.API</name>
     </assembly>
     <members>
-        <member name="T:MSProfessionals.API.Controllers.AddressesController">
+        <member name="T:MSProfessionals.API.Controllers.ProfessionalAddressController">
             <summary>
-            Controller responsável por gerenciar endereços
+            Controller for managing professional addresses
             </summary>
         </member>
-        <member name="M:MSProfessionals.API.Controllers.AddressesController.#ctor(MediatR.IMediator)">
+        <member name="M:MSProfessionals.API.Controllers.ProfessionalAddressController.#ctor(MediatR.IMediator)">
             <summary>
-            Inicializa uma nova instância do AddressesController
+            Initializes a new instance of the ProfessionalAddressController
             </summary>
-            <param name="mediator">Mediador para processamento de comandos</param>
+            <param name="mediator">Mediator for command processing</param>
         </member>
-        <member name="M:MSProfessionals.API.Controllers.AddressesController.Create(MSProfessionals.Application.Commands.ProfessionalAddress.CreateProfessionalAddressCommand)">
+        <member name="M:MSProfessionals.API.Controllers.ProfessionalAddressController.Create(MSProfessionals.Application.Commands.ProfessionalAddress.CreateProfessionalAddressCommand,System.Threading.CancellationToken)">
             <summary>
-            Cria um novo endereço
+            Creates a new professional address
             </summary>
-            <param name="command">Dados do endereço a ser criado</param>
-            <returns>O endereço criado</returns>
-            <response code="201">Retorna o endereço recém-criado</response>
-            <response code="400">Se os dados do endereço forem inválidos</response>
-            <response code="404">Se o profissional não for encontrado</response>
-            <response code="500">Se ocorrer um erro interno</response>
+            <param name="command">Professional address data</param>
+            <param name="cancellationToken">Cancellation token</param>
+            <returns>The created professional address</returns>
+            <response code="201">Returns the newly created professional address</response>
+            <response code="400">If the professional address data is invalid</response>
+            <response code="404">If the professional or country is not found</response>
+            <response code="500">If an internal error occurs</response>
         </member>
-        <member name="M:MSProfessionals.API.Controllers.AddressesController.GetById(System.Guid)">
+        <member name="M:MSProfessionals.API.Controllers.ProfessionalAddressController.GetById(System.Guid,System.Threading.CancellationToken)">
             <summary>
-            Gets an address by ID
+            Gets a professional address by ID
             </summary>
-            <param name="id">The address ID</param>
-            <returns>The address details</returns>
-            <response code="200">Returns the address details</response>
-            <response code="404">If the address is not found</response>
-            <response code="500">Se ocorrer um erro interno</response>
+            <param name="id">Professional address ID</param>
+            <param name="cancellationToken">Cancellation token</param>
+            <returns>The found professional address</returns>
+            <response code="200">Returns the found professional address</response>
+            <response code="404">If the professional address is not found</response>
         </member>
-        <member name="M:MSProfessionals.API.Controllers.AddressesController.GetByProfessionalId(System.Guid)">
+        <member name="M:MSProfessionals.API.Controllers.ProfessionalAddressController.GetByProfessionalId(System.Guid,System.Threading.CancellationToken)">
             <summary>
-            Obtém todos os endereços de um consumidor
+            Gets all addresses for a professional
             </summary>
-            <param name="professionalId">ID do profissional</param>
-            <returns>Lista de endereços do profissional</returns>
-            <response code="200">Retorna a lista de endereços</response>
-            <response code="500">Se ocorrer um erro interno</response>
+            <param name="professionalId">Professional ID</param>
+            <param name="cancellationToken">Cancellation token</param>
+            <returns>List of professional addresses</returns>
+            <response code="200">Returns the list of addresses</response>
+            <response code="404">If the professional is not found</response>
         </member>
-        <member name="M:MSProfessionals.API.Controllers.AddressesController.Update(MSProfessionals.Application.Commands.ProfessionalAddress.UpdateProfessionalAddressCommand)">
+        <member name="M:MSProfessionals.API.Controllers.ProfessionalAddressController.Update(MSProfessionals.Application.Commands.ProfessionalAddress.UpdateProfessionalAddressCommand,System.Threading.CancellationToken)">
             <summary>
-            Atualiza um endereço existente
+            Updates a professional address
             </summary>
-            <param name="command">Comando de atualização de endereço</param>
-            <returns>O endereço atualizado</returns>
+            <param name="command">Professional address data</param>
+            <param name="cancellationToken">Cancellation token</param>
+            <returns>The updated professional address</returns>
+            <response code="200">Returns the updated professional address</response>
+            <response code="400">If the professional address data is invalid</response>
+            <response code="404">If the professional address or country is not found</response>
         </member>
-        <member name="M:MSProfessionals.API.Controllers.AddressesController.Delete(System.Guid)">
+        <member name="M:MSProfessionals.API.Controllers.ProfessionalAddressController.Delete(System.Guid,System.Threading.CancellationToken)">
             <summary>
-            Deletes an address
+            Deletes a professional address
             </summary>
-            <param name="id">The address ID</param>
-            <returns>No content if successful</returns>
+            <param name="id">Professional address ID</param>
+            <param name="cancellationToken">Cancellation token</param>
+            <returns>No content</returns>
+            <response code="204">If the professional address was successfully deleted</response>
+            <response code="404">If the professional address is not found</response>
+            <response code="400">If the professional address cannot be deleted due to constraints</response>
         </member>
         <member name="T:MSProfessionals.API.Controllers.ProfessionalsController">
             <summary>
-            Controller for managing professionals
+            Controller for professionals
             </summary>
         </member>
         <member name="M:MSProfessionals.API.Controllers.ProfessionalsController.#ctor(MediatR.IMediator,Microsoft.Extensions.Logging.ILogger{MSProfessionals.API.Controllers.ProfessionalsController})">
             <summary>
             Initializes a new instance of the ProfessionalsController
             </summary>
-            <param name="mediator">Mediator</param>
+            <param name="mediator">Mediator for command processing</param>
             <param name="logger">Logger</param>
         </member>
         <member name="M:MSProfessionals.API.Controllers.ProfessionalsController.Create(MSProfessionals.Application.Commands.Professional.CreateProfessionalCommand,System.Threading.CancellationToken)">
@@ -78,6 +88,8 @@
             <param name="command">Create professional command</param>
             <param name="cancellationToken">Cancellation token</param>
             <returns>The created professional</returns>
+            <response code="201">Returns the newly created professional</response>
+            <response code="400">If the professional data is invalid</response>
         </member>
         <member name="M:MSProfessionals.API.Controllers.ProfessionalsController.GetById(System.Guid,System.Threading.CancellationToken)">
             <summary>
@@ -85,7 +97,9 @@
             </summary>
             <param name="id">Professional ID</param>
             <param name="cancellationToken">Cancellation token</param>
-            <returns>The found professional</returns>
+            <returns>The professional if found</returns>
+            <response code="200">Returns the professional</response>
+            <response code="404">If the professional is not found</response>
         </member>
         <member name="M:MSProfessionals.API.Controllers.ProfessionalsController.GetByName(System.String)">
             <summary>
@@ -96,12 +110,15 @@
         </member>
         <member name="M:MSProfessionals.API.Controllers.ProfessionalsController.Update(System.Guid,MSProfessionals.Application.Commands.Professional.UpdateProfessionalCommand,System.Threading.CancellationToken)">
             <summary>
-            Updates a professional
+            Updates an existing professional
             </summary>
             <param name="id">Professional ID</param>
             <param name="command">Update professional command</param>
             <param name="cancellationToken">Cancellation token</param>
             <returns>The updated professional</returns>
+            <response code="200">Returns the updated professional</response>
+            <response code="400">If the professional data is invalid</response>
+            <response code="404">If the professional is not found</response>
         </member>
         <member name="M:MSProfessionals.API.Controllers.ProfessionalsController.Delete(System.Guid,System.Threading.CancellationToken)">
             <summary>
@@ -110,6 +127,20 @@
             <param name="id">Professional ID</param>
             <param name="cancellationToken">Cancellation token</param>
             <returns>No content</returns>
+            <response code="204">If the professional was successfully deleted</response>
+            <response code="404">If the professional is not found</response>
+            <response code="400">If the professional cannot be deleted due to constraints</response>
+        </member>
+        <member name="M:MSProfessionals.API.Controllers.ProfessionalsController.CreateProfession(MSProfessionals.Application.Commands.Professional.CreateProfessionCommand,System.Threading.CancellationToken)">
+            <summary>
+            Creates a profession for a professional
+            </summary>
+            <param name="command">Create profession command</param>
+            <param name="cancellationToken">Cancellation token</param>
+            <returns>The created profession</returns>
+            <response code="201">Returns the newly created profession</response>
+            <response code="400">If the profession data is invalid</response>
+            <response code="404">If the professional or profession is not found</response>
         </member>
         <member name="T:MSProfessionals.API.Controllers.ProfessionalServiceController">
             <summary>
@@ -118,9 +149,9 @@
         </member>
         <member name="M:MSProfessionals.API.Controllers.ProfessionalServiceController.#ctor(MediatR.IMediator)">
             <summary>
-            Initializes a new instance of the <see cref="T:MSProfessionals.API.Controllers.ProfessionalServiceController"/> class.
+            Initializes a new instance of the ProfessionalServiceController
             </summary>
-            <param name="mediator">Mediator</param>
+            <param name="mediator">Mediator for command processing</param>
         </member>
         <member name="M:MSProfessionals.API.Controllers.ProfessionalServiceController.GetById(System.Guid,System.Threading.CancellationToken)">
             <summary>
@@ -129,6 +160,18 @@
             <param name="id">Professional service ID</param>
             <param name="cancellationToken">Cancellation token</param>
             <returns>The professional service if found</returns>
+            <response code="200">Returns the professional service</response>
+            <response code="404">If the professional service is not found</response>
+        </member>
+        <member name="M:MSProfessionals.API.Controllers.ProfessionalServiceController.GetByProfessionalId(System.Guid,System.Threading.CancellationToken)">
+            <summary>
+            Gets all services for a professional
+            </summary>
+            <param name="professionalId">Professional ID</param>
+            <param name="cancellationToken">Cancellation token</param>
+            <returns>List of professional services</returns>
+            <response code="200">Returns the list of services</response>
+            <response code="404">If the professional is not found</response>
         </member>
         <member name="M:MSProfessionals.API.Controllers.ProfessionalServiceController.Add(MSProfessionals.Application.Commands.ProfessionalService.AddProfessionalServiceCommand,System.Threading.CancellationToken)">
             <summary>
@@ -137,6 +180,9 @@
             <param name="command">Add professional service command</param>
             <param name="cancellationToken">Cancellation token</param>
             <returns>The added professional service</returns>
+            <response code="201">Returns the newly created professional service</response>
+            <response code="400">If the professional service data is invalid</response>
+            <response code="404">If the professional, profession, or service is not found</response>
         </member>
         <member name="M:MSProfessionals.API.Controllers.ProfessionalServiceController.Update(System.Guid,MSProfessionals.Application.Commands.ProfessionalService.UpdateProfessionalServiceCommand,System.Threading.CancellationToken)">
             <summary>
@@ -146,18 +192,31 @@
             <param name="command">Update professional service command</param>
             <param name="cancellationToken">Cancellation token</param>
             <returns>The updated professional service</returns>
+            <response code="200">Returns the updated professional service</response>
+            <response code="400">If the professional service data is invalid</response>
+            <response code="404">If the professional service, profession, or service is not found</response>
+        </member>
+        <member name="M:MSProfessionals.API.Controllers.ProfessionalServiceController.Delete(System.Guid,System.Threading.CancellationToken)">
+            <summary>
+            Deletes a professional service
+            </summary>
+            <param name="id">Professional service ID</param>
+            <param name="cancellationToken">Cancellation token</param>
+            <returns>No content</returns>
+            <response code="204">If the professional service was successfully deleted</response>
+            <response code="404">If the professional service is not found</response>
+            <response code="400">If the professional service cannot be deleted due to constraints</response>
         </member>
         <member name="T:MSProfessionals.API.Middleware.ExceptionMiddleware">
             <summary>
-            Middleware for handling exceptions globally
+            Middleware to handle exceptions globally
             </summary>
         </member>
-        <member name="M:MSProfessionals.API.Middleware.ExceptionMiddleware.#ctor(Microsoft.AspNetCore.Http.RequestDelegate,Microsoft.Extensions.Logging.ILogger{MSProfessionals.API.Middleware.ExceptionMiddleware})">
+        <member name="M:MSProfessionals.API.Middleware.ExceptionMiddleware.#ctor(Microsoft.AspNetCore.Http.RequestDelegate)">
             <summary>
             Initializes a new instance of the ExceptionMiddleware
             </summary>
-            <param name="next">Next middleware in the pipeline</param>
-            <param name="logger">Logger</param>
+            <param name="next">Request delegate</param>
         </member>
         <member name="M:MSProfessionals.API.Middleware.ExceptionMiddleware.InvokeAsync(Microsoft.AspNetCore.Http.HttpContext)">
             <summary>

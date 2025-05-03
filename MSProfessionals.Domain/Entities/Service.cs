@@ -1,7 +1,10 @@
+using System;
+using System.Collections.Generic;
+
 namespace MSProfessionals.Domain.Entities;
 
 /// <summary>
-/// Represents a service
+/// Service entity
 /// </summary>
 public class Service
 {
@@ -16,7 +19,22 @@ public class Service
     public string Name { get; set; } = string.Empty;
 
     /// <summary>
-    /// Collection of professional services
+    /// Service description
+    /// </summary>
+    public string Description { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Creation date
+    /// </summary>
+    public DateTime CreatedAt { get; set; }
+
+    /// <summary>
+    /// Last update date
+    /// </summary>
+    public DateTime? UpdatedAt { get; set; }
+
+    /// <summary>
+    /// Professional services navigation property
     /// </summary>
     public ICollection<ProfessionalService> ProfessionalServices { get; set; } = new List<ProfessionalService>();
 } 

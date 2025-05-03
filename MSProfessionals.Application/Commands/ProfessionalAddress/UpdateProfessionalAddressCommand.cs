@@ -5,43 +5,43 @@ using MediatR;
 namespace MSProfessionals.Application.Commands.ProfessionalAddress;
 
 /// <summary>
-/// Command para atualizar um endereço
+/// Command to update a professional address
 /// </summary>
 public class UpdateProfessionalAddressCommand : IRequest<UpdateProfessionalAddressCommandResponse>
 {
     /// <summary>
-    /// ID do endereço
+    /// Professional address ID
     /// </summary>
-    [Required]
+    [Required(ErrorMessage = "Professional address ID is required")]
     public Guid Id { get; set; }
 
     /// <summary>
-    /// Endereço completo
+    /// Street address
     /// </summary>
-    [Required]
-    [MaxLength(255)]
-    public required string StreetAddress { get; set; }
+    [Required(ErrorMessage = "Street address is required")]
+    [StringLength(255, ErrorMessage = "Street address cannot exceed 255 characters")]
+    public string StreetAddress { get; set; } = string.Empty;
 
     /// <summary>
-    /// Cidade
+    /// City
     /// </summary>
-    [Required]
-    [MaxLength(30)]
-    public required string City { get; set; }
+    [Required(ErrorMessage = "City is required")]
+    [StringLength(30, ErrorMessage = "City cannot exceed 30 characters")]
+    public string City { get; set; } = string.Empty;
 
     /// <summary>
-    /// Estado
+    /// State
     /// </summary>
-    [Required]
-    [MaxLength(50)]
-    public required string State { get; set; }
+    [Required(ErrorMessage = "State is required")]
+    [StringLength(50, ErrorMessage = "State cannot exceed 50 characters")]
+    public string State { get; set; } = string.Empty;
 
     /// <summary>
-    /// CEP
+    /// Postal code
     /// </summary>
-    [Required]
-    [MaxLength(20)]
-    public required string PostalCode { get; set; }
+    [Required(ErrorMessage = "Postal code is required")]
+    [StringLength(20, ErrorMessage = "Postal code cannot exceed 20 characters")]
+    public string PostalCode { get; set; } = string.Empty;
 
     /// <summary>
     /// Latitude
@@ -54,13 +54,13 @@ public class UpdateProfessionalAddressCommand : IRequest<UpdateProfessionalAddre
     public double? Longitude { get; set; }
 
     /// <summary>
-    /// Indica se é o endereço padrão
+    /// Whether this is the default address
     /// </summary>
     public bool IsDefault { get; set; }
 
     /// <summary>
-    /// ID do país
+    /// Country ID
     /// </summary>
-    [Required]
+    [Required(ErrorMessage = "Country ID is required")]
     public Guid CountryId { get; set; }
 } 

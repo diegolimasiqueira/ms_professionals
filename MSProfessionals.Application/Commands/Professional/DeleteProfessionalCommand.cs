@@ -7,7 +7,7 @@ namespace MSProfessionals.Application.Commands.Professional;
 /// <summary>
 /// Command to delete a professional
 /// </summary>
-public class DeleteProfessionalCommand : IRequest<bool>
+public class DeleteProfessionalCommand : IRequest<Unit>
 {
     /// <summary>
     /// Professional ID
