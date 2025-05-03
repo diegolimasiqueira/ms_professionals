@@ -2,7 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using MSProfessionals.Domain.Entities;
 using MSProfessionals.Infrastructure.Extensions;
 using System.Text.Json;
-using MSProfessionals.Infrastructure.Context.Configurations;
 
 namespace MSProfessionals.Infrastructure.Context;
 
@@ -61,7 +60,7 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
 
         modelBuilder.Entity<ProfessionalAddress>(entity =>
         {
-            entity.ToTable("tb_professional_address");
+            entity.ToTable("tb_professional_address", "shc_professional");
             entity.HasKey(e => e.Id).HasName("PK_tb_professional_address");
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.ProfessionalId).HasColumnName("professional_id").IsRequired();
@@ -71,22 +70,22 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
             entity.Property(e => e.PostalCode).HasColumnName("postalcode").HasMaxLength(20).IsRequired();
             entity.Property(e => e.Latitude).HasColumnName("latitude").IsRequired(false);
             entity.Property(e => e.Longitude).HasColumnName("longitude").IsRequired(false);
-            entity.Property(e => e.IsDefault).HasColumnName("is_default").IsRequired();
+            entity.Property(e => e.IsDefault).HasColumnName("is_default").IsRequired().HasDefaultValue(false);
             entity.Property(e => e.CreatedAt).HasColumnName("created_at").IsRequired();
             entity.Property(e => e.UpdatedAt).HasColumnName("updated_at").IsRequired();
             entity.Property(e => e.CountryId).HasColumnName("country_id").IsRequired();
 
-            entity.HasOne(e => e.Country)
-                .WithMany()
-                .HasForeignKey(e => e.CountryId)
-                .HasConstraintName("FK_tb_professional_address_tb_country_codes_country_id")
-                .OnDelete(DeleteBehavior.Restrict);
-
-            entity.HasOne(e => e.Professional)
-                .WithMany(p => p.Addresses)
+            entity.HasOne<Professional>(e => e.Professional)
+                .WithMany(c => c.Addresses)
                 .HasForeignKey(e => e.ProfessionalId)
-                .HasConstraintName("FK_tb_professional_address_tb_professionals_professional_id")
+                .HasConstraintName("FK_tb_professional_address_professional_id")
                 .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne<CountryCode>(e => e.Country)
+                .WithMany(c => c.Addresses)
+                .HasForeignKey(e => e.Country)
+                .HasConstraintName("FK_tb_professional_address_country_id")
+                .OnDelete(DeleteBehavior.Restrict);
 
             entity.HasIndex(e => e.CountryId).HasDatabaseName("IX_tb_professional_address_country_id");
             entity.HasIndex(e => e.ProfessionalId).HasDatabaseName("IX_tb_professional_address_professional_id");
@@ -237,7 +236,5 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
             entity.HasIndex(e => e.ProfessionalProfessionId).HasDatabaseName("IX_tb_professional_services_professional_profession_id");
             entity.HasIndex(e => e.ServiceId).HasDatabaseName("IX_tb_professional_services_service_id");
         });
-
-        modelBuilder.ApplyConfiguration(new ProfessionalAddressEntityConfiguration());
     }
 }

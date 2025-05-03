@@ -46,11 +46,11 @@ namespace MSProfessionals.Domain.Entities
         /// Country ID
         /// </summary>
         public Guid CountryId { get; set; }
-
+ 
         /// <summary>
         /// Country navigation property
         /// </summary>
-        public Country Country { get; set; } = null!;
+        public CountryCode? Country { get; set; } = null!;
 
         /// <summary>
         /// Latitude
@@ -76,5 +76,33 @@ namespace MSProfessionals.Domain.Entities
         /// Last update date
         /// </summary>
         public DateTime? UpdatedAt { get; set; }
+
+        /// <summary>
+        /// Initializes a new instance of the ProfessionalAddress
+        /// </summary>
+        public ProfessionalAddress(
+            Guid professionalId,
+            string streetAddress,
+            string city,
+            string state,
+            string postalCode,
+            double? latitude,
+            double? longitude,
+            bool isDefault,
+            Guid countryId)
+        {
+            Id = Guid.NewGuid();
+            ProfessionalId = professionalId;
+            StreetAddress = streetAddress;
+            City = city;
+            State = state;
+            PostalCode = postalCode;
+            Latitude = latitude;
+            Longitude = longitude;
+            IsDefault = isDefault;
+            CountryId = countryId;
+            CreatedAt = DateTime.UtcNow;
+            UpdatedAt = DateTime.UtcNow;
+        }
     }
 } 

@@ -53,7 +53,9 @@ public class ProfessionalAddressRepository : IProfessionalAddressRepository
         return await _context.ProfessionalAddresses
             .Include(pa => pa.Professional)
             .Include(pa => pa.Country)
-            .FirstOrDefaultAsync(pa => pa.ProfessionalId == professionalId && pa.IsDefault, cancellationToken);
+            .Where(pa => pa.ProfessionalId == professionalId)
+            .Where(pa => pa.IsDefault)
+            .FirstOrDefaultAsync(cancellationToken);
     }
 
     /// <inheritdoc />
@@ -66,7 +68,9 @@ public class ProfessionalAddressRepository : IProfessionalAddressRepository
     /// <inheritdoc />
     public async Task UpdateAsync(ProfessionalAddress professionalAddress, CancellationToken cancellationToken = default)
     {
-        _context.ProfessionalAddresses.Update(professionalAddress);
+        _context.ProfessionalAddresses.Attach(professionalAddress);
+        var entry = _context.Entry(professionalAddress);
+        entry.State = EntityState.Modified;
         await _context.SaveChangesAsync(cancellationToken);
     }
 

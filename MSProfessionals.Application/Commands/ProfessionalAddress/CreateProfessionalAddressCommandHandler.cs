@@ -70,21 +70,17 @@ public class CreateProfessionalAddressCommandHandler : IRequestHandler<CreatePro
             }
         }
 
-        var professionalAddress = new Domain.Entities.ProfessionalAddress
-        {
-            Id = Guid.NewGuid(),
-            ProfessionalId = request.ProfessionalId,
-            StreetAddress = request.StreetAddress,
-            City = request.City,
-            State = request.State,
-            PostalCode = request.PostalCode,
-            Latitude = request.Latitude,
-            Longitude = request.Longitude,
-            IsDefault = request.IsDefault,
-            CountryId = request.CountryId,
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow
-        };
+        var professionalAddress = new Domain.Entities.ProfessionalAddress(
+            request.ProfessionalId,
+            request.StreetAddress,
+            request.City,
+            request.State,
+            request.PostalCode,
+            request.Latitude,
+            request.Longitude,
+            request.IsDefault,
+            request.CountryId
+        );
 
         await _professionalAddressRepository.AddAsync(professionalAddress, cancellationToken);
 
