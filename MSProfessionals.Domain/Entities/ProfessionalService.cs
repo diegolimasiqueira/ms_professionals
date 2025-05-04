@@ -13,16 +13,6 @@ public class ProfessionalService
     public Guid Id { get; set; }
 
     /// <summary>
-    /// Professional ID
-    /// </summary>
-    public Guid ProfessionalId { get; set; }
-
-    /// <summary>
-    /// Professional navigation property
-    /// </summary>
-    public Professional Professional { get; set; } = null!;
-
-    /// <summary>
     /// Professional profession ID
     /// </summary>
     public Guid ProfessionalProfessionId { get; set; }
@@ -41,11 +31,6 @@ public class ProfessionalService
     /// Service navigation property
     /// </summary>
     public Service Service { get; set; } = null!;
-
-    /// <summary>
-    /// Indicates if this is the default service
-    /// </summary>
-    public bool IsDefault { get; set; }
 
     /// <summary>
     /// Creation date

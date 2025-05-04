@@ -70,7 +70,7 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
             entity.Property(e => e.PostalCode).HasColumnName("postalcode").HasMaxLength(20).IsRequired();
             entity.Property(e => e.Latitude).HasColumnName("latitude").IsRequired(false);
             entity.Property(e => e.Longitude).HasColumnName("longitude").IsRequired(false);
-            entity.Property(e => e.IsDefault).HasColumnName("is_default").IsRequired().HasDefaultValue(false);
+            entity.Property(e => e.IsDefault).HasColumnName("is_default").IsRequired();
             entity.Property(e => e.CreatedAt).HasColumnName("created_at").IsRequired();
             entity.Property(e => e.UpdatedAt).HasColumnName("updated_at").IsRequired();
             entity.Property(e => e.CountryId).HasColumnName("country_id").IsRequired();
@@ -81,11 +81,12 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
                 .HasConstraintName("FK_tb_professional_address_professional_id")
                 .OnDelete(DeleteBehavior.Cascade);
 
-            entity.HasOne<CountryCode>(e => e.Country)
+            entity.HasOne<CountryCode>(e => e.Countrycode)
                 .WithMany(c => c.Addresses)
-                .HasForeignKey(e => e.Country)
+                .HasForeignKey(e => e.CountryId)
                 .HasConstraintName("FK_tb_professional_address_country_id")
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Restrict)
+                .IsRequired();
 
             entity.HasIndex(e => e.CountryId).HasDatabaseName("IX_tb_professional_address_country_id");
             entity.HasIndex(e => e.ProfessionalId).HasDatabaseName("IX_tb_professional_address_professional_id");
@@ -187,7 +188,7 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
 
         modelBuilder.Entity<ProfessionalProfession>(entity =>
         {
-            entity.ToTable("tb_professional_professions");
+            entity.ToTable("tb_professional_professions", "shc_professional");
             entity.HasKey(e => e.Id).HasName("PK_tb_professional_professions");
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.ProfessionalId).HasColumnName("professional_id").IsRequired();
@@ -207,8 +208,9 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
                 .HasConstraintName("FK_tb_professional_professions_tb_professions_profession_id")
                 .OnDelete(DeleteBehavior.Cascade);
 
-            entity.HasIndex(e => e.ProfessionalId).HasDatabaseName("IX_tb_professional_professions_professional_id");
-            entity.HasIndex(e => e.ProfessionId).HasDatabaseName("IX_tb_professional_professions_profession_id");
+            entity.HasIndex(e => new { e.ProfessionalId, e.ProfessionId })
+                .IsUnique()
+                .HasDatabaseName("UQ_tb_professional_professions_professional_id_profession_id");
         });
 
         modelBuilder.Entity<ProfessionalService>(entity =>

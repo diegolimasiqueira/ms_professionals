@@ -5,6 +5,7 @@ using MSProfessionals.Infrastructure.Configurations;
 using MSProfessionals.Infrastructure.Context;
 using MSProfessionals.Domain.Interfaces;
 using MSProfessionals.Infrastructure.Repositories;
+using MSProfessionals.Domain.Entities;
 
 namespace MSProfessionals.Infrastructure.Extensions
 {
@@ -23,13 +24,17 @@ namespace MSProfessionals.Infrastructure.Extensions
 
             // Register repositories
             services.AddScoped<IProfessionalRepository, ProfessionalRepository>();
-            services.AddScoped<IProfessionalAddressRepository, ProfessionalAddressRepository>();
-            services.AddScoped<ICountryCodeRepository, CountryCodeRepository>();
+            services.AddScoped<IAddressRepository, ProfessionalAddressRepository>();
             services.AddScoped<IProfessionalServiceRepository, ProfessionalServiceRepository>();
             services.AddScoped<IProfessionalProfessionRepository, ProfessionalProfessionRepository>();
             services.AddScoped<IServiceRepository, ServiceRepository>();
-            services.AddScoped<IProfessionRepository, ProfessionRepository>();            
-
+            services.AddScoped<IProfessionRepository, ProfessionRepository>();                 
+            services.AddScoped<ICountryCodeRepository, CountryCodeRepository>();       
+            services.AddScoped<ICurrencyRepository, CurrencyRepository>();
+            services.AddScoped<ICountryCodeRepository, CountryCodeRepository>();
+            services.AddScoped<ILanguageRepository, LanguageRepository>();
+            services.AddScoped<ITimeZoneRepository, TimeZoneRepository>();  
+           
             return services;
         }
     }

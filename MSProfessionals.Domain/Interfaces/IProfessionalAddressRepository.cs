@@ -1,58 +1,51 @@
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using MSProfessionals.Domain.Entities;
 
 namespace MSProfessionals.Domain.Interfaces;
 
 /// <summary>
-/// Interface for ProfessionalAddress repository
+/// Interface para o repositório de endereços
 /// </summary>
-public interface IProfessionalAddressRepository
+public interface IAddressRepository
 {
     /// <summary>
-    /// Gets a professional address by ID
+    /// Adiciona um novo endereço
     /// </summary>
-    /// <param name="id">Professional address ID</param>
-    /// <param name="cancellationToken">Cancellation token</param>
-    /// <returns>The professional address if found, null otherwise</returns>
-    Task<ProfessionalAddress?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
+    /// <param name="address">O endereço a ser adicionado</param>
+    /// <returns>Task</returns>
+    Task AddAsync(ProfessionalAddress professionalAddress);
 
     /// <summary>
-    /// Gets all professional addresses for a professional
+    /// Atualiza um endereço existente
     /// </summary>
-    /// <param name="professionalId">Professional ID</param>
-    /// <param name="cancellationToken">Cancellation token</param>
-    /// <returns>List of professional addresses</returns>
-    Task<IEnumerable<ProfessionalAddress>> GetByProfessionalIdAsync(Guid professionalId, CancellationToken cancellationToken = default);
+    /// <param name="address">O endereço a ser atualizado</param>
+    /// <returns>Task</returns>
+    Task UpdateAsync(ProfessionalAddress professionalAddress);
 
     /// <summary>
-    /// Gets the default professional address for a professional
+    /// Remove um endereço
     /// </summary>
-    /// <param name="professionalId">Professional ID</param>
-    /// <param name="cancellationToken">Cancellation token</param>
-    /// <returns>The default professional address if found, null otherwise</returns>
-    Task<ProfessionalAddress?> GetDefaultByProfessionalIdAsync(Guid professionalId, CancellationToken cancellationToken = default);
+    /// <param name="address">O endereço a ser removido</param>
+    /// <returns>Task</returns>
+    Task DeleteAsync(ProfessionalAddress professionalAddress);
 
     /// <summary>
-    /// Adds a new professional address
+    /// Obtém um endereço pelo ID
     /// </summary>
-    /// <param name="professionalAddress">Professional address to add</param>
-    /// <param name="cancellationToken">Cancellation token</param>
-    Task AddAsync(ProfessionalAddress professionalAddress, CancellationToken cancellationToken = default);
+    /// <param name="id">ID do endereço</param>
+    /// <returns>O endereço encontrado ou null</returns>
+    Task<ProfessionalAddress?> GetByIdAsync(Guid id);
 
     /// <summary>
-    /// Updates an existing professional address
+    /// Obtém todos os endereços de um consumidor
     /// </summary>
-    /// <param name="professionalAddress">Professional address to update</param>
-    /// <param name="cancellationToken">Cancellation token</param>
-    Task UpdateAsync(ProfessionalAddress professionalAddress, CancellationToken cancellationToken = default);
+    /// <param name="professionalId">ID do profissional</param>
+    /// <returns>Lista de endereços do profissional</returns>
+    Task<IEnumerable<ProfessionalAddress>> GetByProfessionalIdAsync(Guid professionalId);
 
     /// <summary>
-    /// Deletes a professional address
+    /// Obtém o endereço principal de um profissional
     /// </summary>
-    /// <param name="professionalAddress">Professional address to delete</param>
-    /// <param name="cancellationToken">Cancellation token</param>
-    Task DeleteAsync(ProfessionalAddress professionalAddress, CancellationToken cancellationToken = default);
+    /// <param name="professionalId">ID do profissional</param>
+    /// <returns>O endereço principal ou null</returns>
+    Task<ProfessionalAddress?> GetDefaultByProfessionalIdAsync(Guid professionalId);
 } 

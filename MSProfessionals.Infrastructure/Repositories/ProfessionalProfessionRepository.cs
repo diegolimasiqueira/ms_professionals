@@ -60,7 +60,7 @@ public class ProfessionalProfessionRepository : IProfessionalProfessionRepositor
         return await _context.ProfessionalProfessions
             .Include(pp => pp.Professional)
             .Include(pp => pp.Profession)
-            .FirstOrDefaultAsync(pp => pp.ProfessionalId == professionalId && pp.IsMain, cancellationToken);
+            .FirstOrDefaultAsync(pp => pp.ProfessionalId == professionalId, cancellationToken);
     }
 
     /// <inheritdoc />

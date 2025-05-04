@@ -18,20 +18,13 @@ public class CreateProfessionCommandResponse
     public Guid ProfessionId { get; }
 
     /// <summary>
-    /// Gets a value indicating whether this is the main profession
-    /// </summary>
-    public bool IsMain { get; }
-
-    /// <summary>
     /// Initializes a new instance of the CreateProfessionCommandResponse
     /// </summary>
     /// <param name="professionalId">Professional ID</param>
     /// <param name="professionId">Profession ID</param>
-    /// <param name="isMain">Whether this is the main profession</param>
-    public CreateProfessionCommandResponse(Guid professionalId, Guid professionId, bool isMain)
+    public CreateProfessionCommandResponse(Guid professionalId, Guid professionId)
     {
         ProfessionalId = professionalId;
         ProfessionId = professionId;
-        IsMain = isMain;
     }
 } 

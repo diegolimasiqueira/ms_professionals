@@ -23,16 +23,6 @@ public class ServiceEntityConfiguration : IEntityTypeConfiguration<Service>
             .IsRequired()
             .HasMaxLength(100);
 
-        builder.Property(s => s.Description)
-            .IsRequired()
-            .HasMaxLength(500);
-
-        builder.Property(s => s.CreatedAt)
-            .IsRequired();
-
-        builder.Property(s => s.UpdatedAt)
-            .IsRequired(false);
-
         builder.HasMany(s => s.ProfessionalServices)
             .WithOne(ps => ps.Service)
             .HasForeignKey(ps => ps.ServiceId)

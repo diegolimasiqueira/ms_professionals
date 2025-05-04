@@ -23,6 +23,16 @@ public class GetProfessionalServiceByIdCommandResponse
     public Guid ServiceId { get; set; }
 
     /// <summary>
+    /// Service name
+    /// </summary>
+    public string ServiceName { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Profession name
+    /// </summary>
+    public string ProfessionName { get; set; } = string.Empty;
+
+    /// <summary>
     /// Creation date
     /// </summary>
     public DateTime CreatedAt { get; set; }
@@ -41,6 +51,8 @@ public class GetProfessionalServiceByIdCommandResponse
         Id = professionalService.Id;
         ProfessionalProfessionId = professionalService.ProfessionalProfessionId;
         ServiceId = professionalService.ServiceId;
+        ServiceName = professionalService.Service.Name;
+        ProfessionName = professionalService.ProfessionalProfession.Profession.Name;
         CreatedAt = professionalService.CreatedAt;
         UpdatedAt = professionalService.UpdatedAt;
     }

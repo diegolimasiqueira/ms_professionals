@@ -15,7 +15,7 @@ namespace MSProfessionals.Application.Commands.ProfessionalAddress;
 /// </summary>
 public class GetProfessionalAddressesByProfessionalIdCommandHandler : IRequestHandler<GetProfessionalAddressesByProfessionalIdCommand, IEnumerable<GetProfessionalAddressByIdCommandResponse>>
 {
-    private readonly IProfessionalAddressRepository _professionalAddressRepository;
+    private readonly IAddressRepository _addressRepository;
     private readonly IProfessionalRepository _professionalRepository;
 
     /// <summary>
@@ -24,10 +24,10 @@ public class GetProfessionalAddressesByProfessionalIdCommandHandler : IRequestHa
     /// <param name="professionalAddressRepository">Professional address repository</param>
     /// <param name="professionalRepository">Professional repository</param>
     public GetProfessionalAddressesByProfessionalIdCommandHandler(
-        IProfessionalAddressRepository professionalAddressRepository,
+        IAddressRepository addressRepository,
         IProfessionalRepository professionalRepository)
     {
-        _professionalAddressRepository = professionalAddressRepository;
+        _addressRepository = addressRepository;
         _professionalRepository = professionalRepository;
     }
 
@@ -50,7 +50,7 @@ public class GetProfessionalAddressesByProfessionalIdCommandHandler : IRequestHa
         }
 
         // Get all addresses for the professional
-        var addresses = await _professionalAddressRepository.GetByProfessionalIdAsync(request.ProfessionalId, cancellationToken);
+        var addresses = await _addressRepository.GetByProfessionalIdAsync(request.ProfessionalId);
 
         // Map to response
         return addresses.Select(address => new GetProfessionalAddressByIdCommandResponse(address));

@@ -25,15 +25,11 @@ public class ProfessionalProfessionEntityConfiguration : IEntityTypeConfiguratio
         builder.Property(pp => pp.ProfessionId)
             .IsRequired();
 
-        builder.Property(pp => pp.IsMain)
-            .IsRequired()
-            .HasDefaultValue(false);
-
         builder.Property(pp => pp.CreatedAt)
             .IsRequired();
 
         builder.Property(pp => pp.UpdatedAt)
-            .IsRequired(false);
+            .IsRequired();
 
         builder.HasOne(pp => pp.Professional)
             .WithMany(p => p.ProfessionalProfessions)
@@ -47,9 +43,5 @@ public class ProfessionalProfessionEntityConfiguration : IEntityTypeConfiguratio
 
         builder.HasIndex(pp => new { pp.ProfessionalId, pp.ProfessionId })
             .IsUnique();
-
-        builder.HasIndex(pp => new { pp.ProfessionalId, pp.IsMain })
-            .IsUnique()
-            .HasFilter("[IsMain] = 1");
     }
 } 

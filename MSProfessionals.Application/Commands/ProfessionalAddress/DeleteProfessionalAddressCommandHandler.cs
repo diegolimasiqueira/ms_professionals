@@ -16,15 +16,15 @@ namespace MSProfessionals.Application.Commands.ProfessionalAddress;
 /// </summary>
 public class DeleteProfessionalAddressCommandHandler : IRequestHandler<DeleteProfessionalAddressCommand, Unit>
 {
-    private readonly IProfessionalAddressRepository _professionalAddressRepository;
+    private readonly IAddressRepository _addressRepository;
 
     /// <summary>
     /// Initializes a new instance of the DeleteProfessionalAddressCommandHandler
     /// </summary>
-    /// <param name="professionalAddressRepository">Professional address repository</param>
-    public DeleteProfessionalAddressCommandHandler(IProfessionalAddressRepository professionalAddressRepository)
+    /// <param name="addressRepository">Address repository</param>
+    public DeleteProfessionalAddressCommandHandler(IAddressRepository addressRepository)
     {
-        _professionalAddressRepository = professionalAddressRepository;
+        _addressRepository = addressRepository;
     }
 
     /// <summary>
@@ -45,7 +45,7 @@ public class DeleteProfessionalAddressCommandHandler : IRequestHandler<DeletePro
             throw new ArgumentException("Professional address ID cannot be empty", nameof(request.Id));
         }
 
-        var professionalAddress = await _professionalAddressRepository.GetByIdAsync(request.Id, cancellationToken);
+        var professionalAddress = await _addressRepository.GetByIdAsync(request.Id);
         if (professionalAddress == null)
         {
             throw new ProfessionalNotFoundException($"Professional address with ID {request.Id} not found");
@@ -53,7 +53,7 @@ public class DeleteProfessionalAddressCommandHandler : IRequestHandler<DeletePro
 
         try
         {
-            await _professionalAddressRepository.DeleteAsync(professionalAddress, cancellationToken);
+            await _addressRepository.DeleteAsync(professionalAddress);
             return Unit.Value;
         }
         catch (DbUpdateException ex) when (ex.InnerException is PostgresException pgEx)

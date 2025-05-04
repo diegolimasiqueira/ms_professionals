@@ -33,11 +33,6 @@ public class ProfessionalProfession
     public Profession Profession { get; set; } = null!;
 
     /// <summary>
-    /// Whether this is the main profession
-    /// </summary>
-    public bool IsMain { get; set; }
-
-    /// <summary>
     /// Creation date
     /// </summary>
     public DateTime CreatedAt { get; set; }
@@ -45,10 +40,22 @@ public class ProfessionalProfession
     /// <summary>
     /// Last update date
     /// </summary>
-    public DateTime? UpdatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; }
 
     /// <summary>
     /// Collection of professional services
     /// </summary>
     public ICollection<ProfessionalService> ProfessionalServices { get; set; } = new List<ProfessionalService>();
+
+    /// <summary>
+    /// Initializes a new instance of the ProfessionalProfession
+    /// </summary>
+    public ProfessionalProfession(Guid professionalId, Guid professionId)
+    {
+        Id = Guid.NewGuid();
+        ProfessionalId = professionalId;
+        ProfessionId = professionId;
+        CreatedAt = DateTime.UtcNow;
+        UpdatedAt = DateTime.UtcNow;
+    }
 } 

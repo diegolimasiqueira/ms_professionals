@@ -18,20 +18,6 @@ public class Profession
     /// </summary>
     public string Name { get; set; } = string.Empty;
 
-    /// <summary>
-    /// Gets or sets the profession description
-    /// </summary>
-    public string? Description { get; set; }
-
-    /// <summary>
-    /// Gets or sets the creation date
-    /// </summary>
-    public DateTime CreatedAt { get; set; }
-
-    /// <summary>
-    /// Gets or sets the update date
-    /// </summary>
-    public DateTime? UpdatedAt { get; set; }
 
     /// <summary>
     /// Gets or sets the professional professions

@@ -42,8 +42,8 @@ public class GetProfessionalServicesByProfessionalIdCommandHandler : IRequestHan
         GetProfessionalServicesByProfessionalIdCommand request,
         CancellationToken cancellationToken)
     {
-        // Check if the professional exists
-        var professional = await _professionalRepository.GetByIdAsync(request.ProfessionalId);
+        // Check if the professional exists and load related entities
+        var professional = await _professionalRepository.GetAsync(p => p.Id == request.ProfessionalId, cancellationToken);
         if (professional == null)
         {
             throw new ProfessionalNotFoundException($"Professional with ID {request.ProfessionalId} not found");

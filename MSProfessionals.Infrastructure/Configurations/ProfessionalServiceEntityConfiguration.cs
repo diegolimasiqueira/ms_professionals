@@ -40,5 +40,10 @@ public class ProfessionalServiceEntityConfiguration : IEntityTypeConfiguration<P
             .WithMany()
             .HasForeignKey(ps => ps.ServiceId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        // Add unique constraint to prevent duplicate services for the same professional profession
+        builder.HasIndex(ps => new { ps.ProfessionalProfessionId, ps.ServiceId })
+            .IsUnique()
+            .HasDatabaseName("UQ_tb_professional_services_professional_profession_id_service_id");
     }
 } 

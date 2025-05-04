@@ -62,46 +62,28 @@ public class CreateProfessionCommandHandler : IRequestHandler<CreateProfessionCo
             throw new ProfessionNotFoundException($"Profession with ID {request.ProfessionId} not found");
         }
 
+        // Check if professional already has 3 professions
+        var existingProfessions = await _professionalProfessionRepository.GetByProfessionalIdAsync(request.ProfessionalId, cancellationToken);
+        if (existingProfessions.Count() >= 3)
+        {
+            throw new ProfessionalProfessionLimitExceededException("Professional cannot have more than 3 professions");
+        }
+
         try
         {
-            // If this is the main profession, unset any existing main profession
-            if (request.IsMain)
-            {
-                var existingMain = await _professionalProfessionRepository.GetMainByProfessionalIdAsync(request.ProfessionalId, cancellationToken);
-                if (existingMain != null)
-                {
-                    existingMain.IsMain = false;
-                    await _professionalProfessionRepository.UpdateAsync(existingMain, cancellationToken);
-                }
-            }
-
             // Create the professional profession
-            var professionalProfession = new ProfessionalProfession
-            {
-                ProfessionalId = request.ProfessionalId,
-                ProfessionId = request.ProfessionId,
-                IsMain = request.IsMain
-            };
+            var professionalProfession = new ProfessionalProfession(request.ProfessionalId, request.ProfessionId);
 
             await _professionalProfessionRepository.AddAsync(professionalProfession, cancellationToken);
             await _professionalProfessionRepository.SaveChangesAsync(cancellationToken);
 
             return new CreateProfessionCommandResponse(
                 professionalProfession.ProfessionalId,
-                professionalProfession.ProfessionId,
-                professionalProfession.IsMain);
+                professionalProfession.ProfessionId);
         }
-        catch (DbUpdateException ex) when (ex.InnerException is PostgresException pgEx)
+        catch (DbUpdateException ex) when (ex.InnerException is PostgresException pgEx && pgEx.SqlState == "23505")
         {
-            switch (pgEx.SqlState)
-            {
-                case "23503": // Foreign key violation
-                    throw new InvalidOperationException("The professional or profession does not exist.");
-                case "23505": // Unique constraint violation
-                    throw new InvalidOperationException("The professional already has this profession.");
-                default:
-                    throw;
-            }
+            throw new UniqueConstraintViolationException("ProfessionalProfession", $"{request.ProfessionalId}-{request.ProfessionId}");
         }
     }
 } 

@@ -120,4 +120,23 @@ public class ProfessionalServiceController : ControllerBase
         await _mediator.Send(command, cancellationToken);
         return NoContent();
     }
+
+    /// <summary>
+    /// Adds multiple professional services at once
+    /// </summary>
+    /// <param name="command">Add multiple professional services command</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>The added professional services</returns>
+    /// <response code="201">Returns the newly created professional services</response>
+    /// <response code="400">If the professional services data is invalid</response>
+    /// <response code="404">If the professional, profession, or service is not found</response>
+    [HttpPost("multiple")]
+    [ProducesResponseType(typeof(IEnumerable<AddProfessionalServiceCommandResponse>), StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<IEnumerable<AddProfessionalServiceCommandResponse>>> AddMultiple(AddMultipleProfessionalServicesCommand command, CancellationToken cancellationToken = default)
+    {
+        var result = await _mediator.Send(command, cancellationToken);
+        return CreatedAtAction(nameof(GetById), new { id = result.First().Id }, result);
+    }
 } 

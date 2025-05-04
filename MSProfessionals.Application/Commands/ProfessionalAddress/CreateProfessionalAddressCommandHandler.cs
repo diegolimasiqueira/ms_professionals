@@ -1,9 +1,5 @@
-using System;
 using System.ComponentModel.DataAnnotations;
-using System.Threading;
-using System.Threading.Tasks;
 using MediatR;
-using MSProfessionals.Domain.Entities;
 using MSProfessionals.Domain.Interfaces;
 using MSProfessionals.Domain.Exceptions;
 
@@ -14,7 +10,7 @@ namespace MSProfessionals.Application.Commands.ProfessionalAddress;
 /// </summary>
 public class CreateProfessionalAddressCommandHandler : IRequestHandler<CreateProfessionalAddressCommand, CreateProfessionalAddressCommandResponse>
 {
-    private readonly IProfessionalAddressRepository _professionalAddressRepository;
+    private readonly IAddressRepository _addressRepository;
     private readonly IProfessionalRepository _professionalRepository;
     private readonly ICountryCodeRepository _countryCodeRepository;
 
@@ -25,11 +21,11 @@ public class CreateProfessionalAddressCommandHandler : IRequestHandler<CreatePro
     /// <param name="professionalRepository">Professional repository</param>
     /// <param name="countryCodeRepository">Country code repository</param>
     public CreateProfessionalAddressCommandHandler(
-        IProfessionalAddressRepository professionalAddressRepository,
+        IAddressRepository addressRepository,
         IProfessionalRepository professionalRepository,
         ICountryCodeRepository countryCodeRepository)
     {
-        _professionalAddressRepository = professionalAddressRepository;
+        _addressRepository = addressRepository;
         _professionalRepository = professionalRepository;
         _countryCodeRepository = countryCodeRepository;
     }
@@ -46,14 +42,14 @@ public class CreateProfessionalAddressCommandHandler : IRequestHandler<CreatePro
         Validator.ValidateObject(request, new ValidationContext(request), validateAllProperties: true);
 
         // Check if professional exists
-        var professional = await _professionalRepository.GetByIdAsync(request.ProfessionalId);
+        var professional = await _professionalRepository.GetByIdWithoutRelationsAsync(request.ProfessionalId, cancellationToken);
         if (professional == null)
         {
             throw new ProfessionalNotFoundException($"Professional with ID {request.ProfessionalId} not found");
         }
 
         // Check if country exists
-        var country = await _countryCodeRepository.GetByIdAsync(request.CountryId, cancellationToken);
+        var country = await _countryCodeRepository.GetByIdAsync(request.CountryId);
         if (country == null)
         {
             throw new NotFoundException($"Country with ID {request.CountryId} not found");
@@ -62,11 +58,11 @@ public class CreateProfessionalAddressCommandHandler : IRequestHandler<CreatePro
         // If this is the default address, unset any existing default address
         if (request.IsDefault)
         {
-            var existingDefault = await _professionalAddressRepository.GetDefaultByProfessionalIdAsync(request.ProfessionalId, cancellationToken);
+            var existingDefault = await _addressRepository.GetDefaultByProfessionalIdAsync(request.ProfessionalId);
             if (existingDefault != null)
             {
                 existingDefault.IsDefault = false;
-                await _professionalAddressRepository.UpdateAsync(existingDefault, cancellationToken);
+                await _addressRepository.UpdateAsync(existingDefault);
             }
         }
 
@@ -82,7 +78,7 @@ public class CreateProfessionalAddressCommandHandler : IRequestHandler<CreatePro
             request.CountryId
         );
 
-        await _professionalAddressRepository.AddAsync(professionalAddress, cancellationToken);
+        await _addressRepository.AddAsync(professionalAddress);
 
         return new CreateProfessionalAddressCommandResponse(professionalAddress);
     }

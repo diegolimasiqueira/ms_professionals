@@ -46,7 +46,7 @@ public class GetProfessionalByNameCommandHandler : IRequestHandler<GetProfession
             }
 
             // Get professional
-            var professional = await _professionalRepository.GetByEmailAsync(request.Name, cancellationToken);
+            var professional = await _professionalRepository.GetByNameAsync(request.Name, cancellationToken);
             if (professional == null)
             {
                 throw new ProfessionalNotFoundException($"Professional with name '{request.Name}' not found");

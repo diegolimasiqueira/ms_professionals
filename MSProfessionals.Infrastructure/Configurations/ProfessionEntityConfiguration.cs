@@ -15,21 +15,13 @@ public class ProfessionEntityConfiguration : IEntityTypeConfiguration<Profession
     /// <param name="builder">Entity type builder</param>
     public void Configure(EntityTypeBuilder<Profession> builder)
     {
-        builder.ToTable("Professions");
+        builder.ToTable("tb_professions");
 
         builder.HasKey(p => p.Id);
 
         builder.Property(p => p.Name)
             .IsRequired()
             .HasMaxLength(100);
-
-        builder.Property(p => p.Description)
-            .HasMaxLength(500);
-
-        builder.Property(p => p.CreatedAt)
-            .IsRequired();
-
-        builder.Property(p => p.UpdatedAt);
 
         builder.HasMany(p => p.ProfessionalProfessions)
             .WithOne(pp => pp.Profession)

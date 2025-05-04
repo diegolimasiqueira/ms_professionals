@@ -9,15 +9,15 @@ namespace MSProfessionals.Application.Commands.ProfessionalAddress;
 /// </summary>
 public class GetProfessionalAddressByIdCommandHandler : IRequestHandler<GetProfessionalAddressByIdCommand, GetProfessionalAddressByIdCommandResponse>
 {
-    private readonly IProfessionalAddressRepository _professionalAddressRepository;
+    private readonly IAddressRepository _addressRepository;
 
     /// <summary>
     /// Initializes a new instance of the GetProfessionalAddressByIdCommandHandler
     /// </summary>
-    /// <param name="professionalAddressRepository">Professional address repository</param>
-    public GetProfessionalAddressByIdCommandHandler(IProfessionalAddressRepository professionalAddressRepository)
+    /// <param name="addressRepository">Address repository</param>
+    public GetProfessionalAddressByIdCommandHandler(IAddressRepository addressRepository)
     {
-        _professionalAddressRepository = professionalAddressRepository;
+        _addressRepository = addressRepository;
     }
 
     /// <summary>
@@ -28,7 +28,7 @@ public class GetProfessionalAddressByIdCommandHandler : IRequestHandler<GetProfe
     /// <returns>GetProfessionalAddressByIdCommandResponse</returns>
     public async Task<GetProfessionalAddressByIdCommandResponse> Handle(GetProfessionalAddressByIdCommand request, CancellationToken cancellationToken)
     {
-        var professionalAddress = await _professionalAddressRepository.GetByIdAsync(request.Id, cancellationToken);
+        var professionalAddress = await _addressRepository.GetByIdAsync(request.Id);
 
         if (professionalAddress == null)
         {

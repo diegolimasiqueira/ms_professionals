@@ -30,11 +30,7 @@ public class ProfessionalRepository : IProfessionalRepository
     public async Task<Professional?> GetByEmailAsync(string email, CancellationToken cancellationToken = default)
     {
         return await _context.Professionals
-            .Include(p => p.ProfessionalProfessions)
-                .ThenInclude(pp => pp.Profession)
-            .Include(p => p.ProfessionalProfessions)
-                .ThenInclude(pp => pp.ProfessionalServices)
-                    .ThenInclude(ps => ps.Service)
+            .AsNoTracking()
             .FirstOrDefaultAsync(p => p.Email == email, cancellationToken);
     }
 
@@ -42,11 +38,7 @@ public class ProfessionalRepository : IProfessionalRepository
     public async Task<Professional?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return await _context.Professionals
-            .Include(p => p.ProfessionalProfessions)
-                .ThenInclude(pp => pp.Profession)
-            .Include(p => p.ProfessionalProfessions)
-                .ThenInclude(pp => pp.ProfessionalServices)
-                    .ThenInclude(ps => ps.Service)
+            .AsNoTracking()
             .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
     }
 
@@ -54,24 +46,33 @@ public class ProfessionalRepository : IProfessionalRepository
     public async Task<Professional?> GetByNameAsync(string name, CancellationToken cancellationToken = default)
     {
         return await _context.Professionals
-            .Include(p => p.ProfessionalProfessions)
-                .ThenInclude(pp => pp.Profession)
-            .Include(p => p.ProfessionalProfessions)
-                .ThenInclude(pp => pp.ProfessionalServices)
-                    .ThenInclude(ps => ps.Service)
-            .FirstOrDefaultAsync(p => p.Name == name, cancellationToken);
+            .AsNoTracking()
+            .FirstOrDefaultAsync(p => EF.Functions.ILike(p.Name, $"%{name}%"), cancellationToken);
     }
 
     /// <inheritdoc />
     public async Task<IEnumerable<Professional>> GetAllAsync(CancellationToken cancellationToken = default)
     {
         return await _context.Professionals
-            .Include(p => p.ProfessionalProfessions)
-                .ThenInclude(pp => pp.Profession)
-            .Include(p => p.ProfessionalProfessions)
-                .ThenInclude(pp => pp.ProfessionalServices)
-                    .ThenInclude(ps => ps.Service)
+            .AsNoTracking()
             .ToListAsync(cancellationToken);
+    }
+
+    /// <inheritdoc />
+    public async Task<IEnumerable<Professional>> GetAllAsync(int skip, int take, CancellationToken cancellationToken = default)
+    {
+        return await _context.Professionals
+            .AsNoTracking()
+            .Skip(skip)
+            .Take(take)
+            .ToListAsync(cancellationToken);
+    }
+
+    /// <inheritdoc />
+    public async Task<int> CountAsync(CancellationToken cancellationToken = default)
+    {
+        return await _context.Professionals
+            .CountAsync(cancellationToken);
     }
 
     /// <inheritdoc />
@@ -157,5 +158,12 @@ public class ProfessionalRepository : IProfessionalRepository
     {
         await _context.ProfessionalServices.AddAsync(professionalService, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
+    }
+
+    /// <inheritdoc />
+    public async Task<Professional?> GetByIdWithoutRelationsAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        return await _context.Professionals
+            .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
     }
 }

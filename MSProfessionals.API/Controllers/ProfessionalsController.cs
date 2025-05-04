@@ -6,6 +6,7 @@ using MediatR;
 using MSProfessionals.Application.Commands.Professional;
 using MSProfessionals.Domain.Exceptions;
 using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
 
 namespace MSProfessionals.API.Controllers;
 
@@ -146,5 +147,69 @@ public class ProfessionalsController : ControllerBase
     {
         var result = await _mediator.Send(command, cancellationToken);
         return CreatedAtAction(nameof(GetById), new { id = result.ProfessionalId }, result);
+    }
+
+    /// <summary>
+    /// Deletes a professional profession
+    /// </summary>
+    /// <param name="id">Professional profession ID</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>No content</returns>
+    /// <response code="204">If the professional profession was successfully deleted</response>
+    /// <response code="404">If the professional profession is not found</response>
+    /// <response code="400">If the professional profession cannot be deleted due to constraints</response>
+    [HttpDelete("profession/{id}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> DeleteProfession(Guid id, CancellationToken cancellationToken = default)
+    {
+        var command = new DeleteProfessionCommand { Id = id };
+        await _mediator.Send(command, cancellationToken);
+        return NoContent();
+    }
+
+    /// <summary>
+    /// Gets all professions for a professional
+    /// </summary>
+    /// <param name="professionalId">Professional ID</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>List of professional professions</returns>
+    /// <response code="200">Returns the list of professions</response>
+    /// <response code="404">If the professional is not found</response>
+    [HttpGet("{professionalId}/professions")]
+    [ProducesResponseType(typeof(IEnumerable<GetProfessionalProfessionsCommandResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<IEnumerable<GetProfessionalProfessionsCommandResponse>>> GetProfessionalProfessions(Guid professionalId, CancellationToken cancellationToken = default)
+    {
+        var command = new GetProfessionalProfessionsCommand { ProfessionalId = professionalId };
+        var result = await _mediator.Send(command, cancellationToken);
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// Gets all professionals with pagination, ordered by name
+    /// </summary>
+    /// <param name="pageNumber">Page number (1-based)</param>
+    /// <param name="pageSize">Page size</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>Paginated list of professionals</returns>
+    /// <response code="200">Returns the paginated list of professionals</response>
+    /// <response code="400">If the page number or size is invalid</response>
+    [HttpGet]
+    [ProducesResponseType(typeof(GetProfessionalsCommandResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<GetProfessionalsCommandResponse>> GetProfessionals(
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10,
+        CancellationToken cancellationToken = default)
+    {
+        var command = new GetProfessionalsCommand 
+        { 
+            PageNumber = pageNumber,
+            PageSize = pageSize
+        };
+        var result = await _mediator.Send(command, cancellationToken);
+        return Ok(result);
     }
 } 

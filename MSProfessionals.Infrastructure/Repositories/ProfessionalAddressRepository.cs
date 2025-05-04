@@ -1,83 +1,69 @@
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using MSProfessionals.Domain.Entities;
-using MSProfessionals.Domain.Interfaces;
 using MSProfessionals.Infrastructure.Context;
+using MSProfessionals.Domain.Interfaces;
 
 namespace MSProfessionals.Infrastructure.Repositories;
 
 /// <summary>
-/// Implementation of the professional address repository
+/// Implementação do repositório de endereços
 /// </summary>
-public class ProfessionalAddressRepository : IProfessionalAddressRepository
+public class ProfessionalAddressRepository : IAddressRepository
 {
     private readonly ApplicationDbContext _context;
 
     /// <summary>
-    /// Initializes a new instance of the ProfessionalAddressRepository
+    /// Inicializa uma nova instância do AddressRepository
     /// </summary>
-    /// <param name="context">Application database context</param>
+    /// <param name="context">Contexto do banco de dados</param>
     public ProfessionalAddressRepository(ApplicationDbContext context)
     {
         _context = context;
     }
 
     /// <inheritdoc />
-    public async Task<ProfessionalAddress?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task AddAsync(ProfessionalAddress professionalAddress)
     {
-        return await _context.ProfessionalAddresses
-            .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+        await _context.ProfessionalAddresses.AddAsync(professionalAddress);
+        await _context.SaveChangesAsync();
     }
 
     /// <inheritdoc />
-    public async Task<IEnumerable<ProfessionalAddress>> GetAllAsync(CancellationToken cancellationToken = default)
+    public async Task UpdateAsync(ProfessionalAddress professionalAddress)
     {
-        return await _context.ProfessionalAddresses
-            .ToListAsync(cancellationToken);
+        _context.Entry(professionalAddress).State = EntityState.Modified;
+        await _context.SaveChangesAsync();
     }
 
     /// <inheritdoc />
-    public async Task<IEnumerable<ProfessionalAddress>> GetByProfessionalIdAsync(Guid professionalId, CancellationToken cancellationToken = default)
-    {
-        return await _context.ProfessionalAddresses
-            .Where(x => x.ProfessionalId == professionalId)
-            .ToListAsync(cancellationToken);
-    }
-
-    /// <inheritdoc />
-    public async Task<ProfessionalAddress?> GetDefaultByProfessionalIdAsync(Guid professionalId, CancellationToken cancellationToken = default)
-    {
-        return await _context.ProfessionalAddresses
-            .Include(pa => pa.Professional)
-            .Include(pa => pa.Country)
-            .Where(pa => pa.ProfessionalId == professionalId)
-            .Where(pa => pa.IsDefault)
-            .FirstOrDefaultAsync(cancellationToken);
-    }
-
-    /// <inheritdoc />
-    public async Task AddAsync(ProfessionalAddress professionalAddress, CancellationToken cancellationToken = default)
-    {
-        await _context.ProfessionalAddresses.AddAsync(professionalAddress, cancellationToken);
-        await _context.SaveChangesAsync(cancellationToken);
-    }
-
-    /// <inheritdoc />
-    public async Task UpdateAsync(ProfessionalAddress professionalAddress, CancellationToken cancellationToken = default)
-    {
-        _context.ProfessionalAddresses.Attach(professionalAddress);
-        var entry = _context.Entry(professionalAddress);
-        entry.State = EntityState.Modified;
-        await _context.SaveChangesAsync(cancellationToken);
-    }
-
-    /// <inheritdoc />
-    public async Task DeleteAsync(ProfessionalAddress professionalAddress, CancellationToken cancellationToken = default)
+    public async Task DeleteAsync(ProfessionalAddress professionalAddress)
     {
         _context.ProfessionalAddresses.Remove(professionalAddress);
-        await _context.SaveChangesAsync(cancellationToken);
+        await _context.SaveChangesAsync();
+    }
+
+    /// <inheritdoc />
+    public async Task<ProfessionalAddress?> GetByIdAsync(Guid id)
+    {
+        return await _context.ProfessionalAddresses
+            .AsNoTracking()
+            .FirstOrDefaultAsync(a => a.Id == id);
+    }
+
+    /// <inheritdoc />
+    public async Task<IEnumerable<ProfessionalAddress>> GetByProfessionalIdAsync(Guid professionalId)
+    {
+        return await _context.ProfessionalAddresses
+            .AsNoTracking()
+            .Where(a => a.ProfessionalId == professionalId)
+            .ToListAsync();
+    }
+
+    /// <inheritdoc />
+    public async Task<ProfessionalAddress?> GetDefaultByProfessionalIdAsync(Guid professionalId)
+    {
+        return await _context.ProfessionalAddresses
+            .AsNoTracking()
+            .FirstOrDefaultAsync(a => a.ProfessionalId == professionalId && a.IsDefault);
     }
 } 

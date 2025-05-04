@@ -50,7 +50,7 @@ namespace MSProfessionals.Domain.Entities
         /// <summary>
         /// Country navigation property
         /// </summary>
-        public CountryCode? Country { get; set; } = null!;
+         public CountryCode? Countrycode { get; set; } = null!;
 
         /// <summary>
         /// Latitude

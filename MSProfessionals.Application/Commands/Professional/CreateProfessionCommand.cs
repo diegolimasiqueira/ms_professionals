@@ -20,9 +20,4 @@ public class CreateProfessionCommand : IRequest<CreateProfessionCommandResponse>
     /// </summary>
     [Required]
     public Guid ProfessionId { get; set; }
-
-    /// <summary>
-    /// Gets or sets a value indicating whether this is the main profession
-    /// </summary>
-    public bool IsMain { get; set; }
 } 

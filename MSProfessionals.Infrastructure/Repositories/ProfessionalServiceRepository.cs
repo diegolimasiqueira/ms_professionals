@@ -1,3 +1,7 @@
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using MSProfessionals.Domain.Entities;
 using MSProfessionals.Domain.Interfaces;
@@ -25,14 +29,18 @@ public class ProfessionalServiceRepository : IProfessionalServiceRepository
     public async Task<ProfessionalService?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return await _context.ProfessionalServices
-            .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+            .Include(ps => ps.ProfessionalProfession)
+            .Include(ps => ps.Service)
+            .FirstOrDefaultAsync(ps => ps.Id == id, cancellationToken);
     }
 
     /// <inheritdoc />
     public async Task<IEnumerable<ProfessionalService>> GetByProfessionalProfessionIdAsync(Guid professionalProfessionId, CancellationToken cancellationToken = default)
     {
         return await _context.ProfessionalServices
-            .Where(x => x.ProfessionalProfessionId == professionalProfessionId)
+            .Include(ps => ps.ProfessionalProfession)
+            .Include(ps => ps.Service)
+            .Where(ps => ps.ProfessionalProfessionId == professionalProfessionId)
             .ToListAsync(cancellationToken);
     }
 
@@ -40,8 +48,19 @@ public class ProfessionalServiceRepository : IProfessionalServiceRepository
     public async Task<IEnumerable<ProfessionalService>> GetByServiceIdAsync(Guid serviceId, CancellationToken cancellationToken = default)
     {
         return await _context.ProfessionalServices
-            .Where(x => x.ServiceId == serviceId)
+            .Include(ps => ps.ProfessionalProfession)
+            .Include(ps => ps.Service)
+            .Where(ps => ps.ServiceId == serviceId)
             .ToListAsync(cancellationToken);
+    }
+
+    /// <inheritdoc />
+    public async Task<ProfessionalService?> GetByProfessionalProfessionIdAndServiceIdAsync(Guid professionalProfessionId, Guid serviceId, CancellationToken cancellationToken = default)
+    {
+        return await _context.ProfessionalServices
+            .Include(ps => ps.ProfessionalProfession)
+            .Include(ps => ps.Service)
+            .FirstOrDefaultAsync(ps => ps.ProfessionalProfessionId == professionalProfessionId && ps.ServiceId == serviceId, cancellationToken);
     }
 
     /// <inheritdoc />

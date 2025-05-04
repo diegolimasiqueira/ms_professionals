@@ -2,7 +2,9 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Linq;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using MSProfessionals.Domain.Entities;
 using MSProfessionals.Domain.Interfaces;
 using MSProfessionals.Domain.Exceptions;
@@ -57,6 +59,34 @@ public class AddProfessionalServiceCommandHandler : IRequestHandler<AddProfessio
         if (service == null)
         {
             throw new ServiceNotFoundException($"Service with ID {request.ServiceId} not found");
+        }
+
+        // Check if the service is already associated with this professional profession
+        var existingService = await _professionalServiceRepository.GetByProfessionalProfessionIdAndServiceIdAsync(
+            request.ProfessionalProfessionId, 
+            request.ServiceId, 
+            cancellationToken);
+        
+        if (existingService != null)
+        {
+            throw new DuplicateServiceException($"Service with ID {request.ServiceId} is already associated with this professional profession");
+        }
+
+        // Get all professional professions for this professional
+        var professionalProfessions = await _professionalProfessionRepository.GetByProfessionalIdAsync(professionalProfession.ProfessionalId, cancellationToken);
+        
+        // Count total services across all professions
+        int totalServices = 0;
+        foreach (var pp in professionalProfessions)
+        {
+            var services = await _professionalServiceRepository.GetByProfessionalProfessionIdAsync(pp.Id, cancellationToken);
+            totalServices += services.Count();
+        }
+
+        // Check if professional already has 10 services
+        if (totalServices >= 10)
+        {
+            throw new ProfessionalServiceLimitExceededException("Professional cannot have more than 10 services across all professions");
         }
 
         // Create the professional service

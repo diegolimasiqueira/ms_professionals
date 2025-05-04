@@ -51,6 +51,22 @@ namespace MSProfessionals.Domain.Interfaces
         Task<IEnumerable<Professional>> GetAllAsync(CancellationToken cancellationToken = default);
 
         /// <summary>
+        /// Gets all professionals with pagination
+        /// </summary>
+        /// <param name="skip">Number of items to skip</param>
+        /// <param name="take">Number of items to take</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>List of professionals</returns>
+        Task<IEnumerable<Professional>> GetAllAsync(int skip, int take, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Gets the total number of professionals
+        /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Total number of professionals</returns>
+        Task<int> CountAsync(CancellationToken cancellationToken = default);
+
+        /// <summary>
         /// Adds a new professional
         /// </summary>
         /// <param name="professional">Professional to add</param>
@@ -105,5 +121,13 @@ namespace MSProfessionals.Domain.Interfaces
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Task</returns>
         Task AddProfessionalServiceAsync(ProfessionalService professionalService, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Gets a professional by ID without loading relations
+        /// </summary>
+        /// <param name="id">Professional ID</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>The found professional or null</returns>
+        Task<Professional?> GetByIdWithoutRelationsAsync(Guid id, CancellationToken cancellationToken = default);
     }
 } 

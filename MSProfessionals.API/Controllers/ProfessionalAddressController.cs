@@ -29,7 +29,6 @@ public class ProfessionalAddressController : ControllerBase
     /// Creates a new professional address
     /// </summary>
     /// <param name="command">Professional address data</param>
-    /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>The created professional address</returns>
     /// <response code="201">Returns the newly created professional address</response>
     /// <response code="400">If the professional address data is invalid</response>
@@ -40,9 +39,9 @@ public class ProfessionalAddressController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> Create([FromBody] CreateProfessionalAddressCommand command, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> Create([FromBody] CreateProfessionalAddressCommand command)
     {
-        var result = await _mediator.Send(command, cancellationToken);
+        var result = await _mediator.Send(command);
         return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
     }
 

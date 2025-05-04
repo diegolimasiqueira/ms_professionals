@@ -36,6 +36,15 @@ public interface IProfessionalServiceRepository
     Task<IEnumerable<ProfessionalService>> GetByServiceIdAsync(Guid serviceId, CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Gets a professional service by professional profession ID and service ID
+    /// </summary>
+    /// <param name="professionalProfessionId">Professional profession ID</param>
+    /// <param name="serviceId">Service ID</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>The professional service if found, null otherwise</returns>
+    Task<ProfessionalService?> GetByProfessionalProfessionIdAndServiceIdAsync(Guid professionalProfessionId, Guid serviceId, CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Adds a new professional service
     /// </summary>
     /// <param name="professionalService">Professional service to add</param>

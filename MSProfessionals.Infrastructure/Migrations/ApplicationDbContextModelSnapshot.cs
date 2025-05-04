@@ -18,7 +18,7 @@ namespace MSProfessionals.Infrastructure.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("shc_professional")
-                .HasAnnotation("ProductVersion", "8.0.4")
+                .HasAnnotation("ProductVersion", "9.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -313,11 +313,11 @@ namespace MSProfessionals.Infrastructure.Migrations
                     b.HasKey("Id")
                         .HasName("PK_tb_professional_professions");
 
-                    b.HasIndex("ProfessionId")
-                        .HasDatabaseName("IX_tb_professional_professions_profession_id");
+                    b.HasIndex("ProfessionId");
 
-                    b.HasIndex("ProfessionalId")
-                        .HasDatabaseName("IX_tb_professional_professions_professional_id");
+                    b.HasIndex("ProfessionalId", "ProfessionId")
+                        .IsUnique()
+                        .HasDatabaseName("UQ_tb_professional_professions_professional_id_profession_id");
 
                     b.ToTable("tb_professional_professions", "shc_professional");
                 });
@@ -415,7 +415,7 @@ namespace MSProfessionals.Infrastructure.Migrations
                         .HasConstraintName("FK_tb_professionals_tb_currencies_currency_id");
 
                     b.HasOne("MSProfessionals.Domain.Entities.CountryCode", "PhoneCountryCode")
-                        .WithMany()
+                        .WithMany("Professionals")
                         .HasForeignKey("PhoneCountryCodeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
@@ -446,21 +446,21 @@ namespace MSProfessionals.Infrastructure.Migrations
 
             modelBuilder.Entity("MSProfessionals.Domain.Entities.ProfessionalAddress", b =>
                 {
-                    b.HasOne("MSProfessionals.Domain.Entities.CountryCode", "Country")
-                        .WithMany()
+                    b.HasOne("MSProfessionals.Domain.Entities.CountryCode", "Countrycode")
+                        .WithMany("Addresses")
                         .HasForeignKey("CountryId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
-                        .HasConstraintName("FK_tb_professional_address_tb_country_codes_country_id");
+                        .HasConstraintName("FK_tb_professional_address_country_id");
 
                     b.HasOne("MSProfessionals.Domain.Entities.Professional", "Professional")
                         .WithMany("Addresses")
                         .HasForeignKey("ProfessionalId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("FK_tb_professional_address_tb_professionals_professional_id");
+                        .HasConstraintName("FK_tb_professional_address_professional_id");
 
-                    b.Navigation("Country");
+                    b.Navigation("Countrycode");
 
                     b.Navigation("Professional");
                 });
@@ -505,6 +505,13 @@ namespace MSProfessionals.Infrastructure.Migrations
                     b.Navigation("ProfessionalProfession");
 
                     b.Navigation("Service");
+                });
+
+            modelBuilder.Entity("MSProfessionals.Domain.Entities.CountryCode", b =>
+                {
+                    b.Navigation("Addresses");
+
+                    b.Navigation("Professionals");
                 });
 
             modelBuilder.Entity("MSProfessionals.Domain.Entities.Profession", b =>
