@@ -24,4 +24,57 @@ nupkg/
 # Arquivos temporários
 [Tt]emp/
 *.tmp
-*.temp 
+*.temp
+
+# Arquivos de teste
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+
+# Arquivos de cobertura de código
+*.coverage
+*.coveragexml
+
+# Arquivos de publicação
+**/PublishProfiles/
+*.Publish.xml
+
+# Arquivos de NuGet
+*.nupkg
+# O diretório packages/ pode ser ignorado, mas se você quiser manter o controle de versão do arquivo packages.config, remova a linha abaixo
+#packages/
+
+# Arquivos de ReSharper
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+# Arquivos de TeamCity
+_TeamCity*
+
+# Arquivos de dotCover
+*.dotCover
+
+# Arquivos de Visual Studio Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# Arquivos de configuração local
+appsettings.*.json
+!appsettings.json
+!appsettings.Example.json
+
+# Arquivos de certificados
+*.pfx
+*.key
+
+# Arquivos de cache do Visual Studio
+.vs/
+*.vspscc
+*.vssscc
+.builds
+*.pidb
+*.svclog
+*.scc 
