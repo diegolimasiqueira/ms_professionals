@@ -33,6 +33,12 @@ nupkg/
 # Arquivos de cobertura de código
 *.coverage
 *.coveragexml
+coverage/
+coverage.json
+coverage.xml
+coverage.info
+lcov.info
+*.lcov
 
 # Arquivos de publicação
 **/PublishProfiles/

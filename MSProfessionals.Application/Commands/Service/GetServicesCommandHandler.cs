@@ -28,6 +28,9 @@ public class GetServicesCommandHandler : IRequestHandler<GetServicesCommand, Get
     /// <inheritdoc />
     public async Task<GetServicesCommandResponse> Handle(GetServicesCommand request, CancellationToken cancellationToken)
     {
+        if (request == null)
+            throw new ArgumentNullException(nameof(request));
+
         var skip = (request.PageNumber - 1) * request.PageSize;
         var services = await _serviceRepository.GetAllAsync(skip, request.PageSize, request.Name, cancellationToken);
         var totalCount = await _serviceRepository.CountAsync(request.Name, cancellationToken);
