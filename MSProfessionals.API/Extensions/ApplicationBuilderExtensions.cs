@@ -6,6 +6,7 @@ namespace MSProfessionals.API.Extensions
     {
         public static IApplicationBuilder UseExceptionMiddleware(this IApplicationBuilder app)
         {
+            ArgumentNullException.ThrowIfNull(app);
             app.UseMiddleware<ExceptionMiddleware>();
             return app;
         }

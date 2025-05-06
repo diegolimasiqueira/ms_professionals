@@ -49,13 +49,11 @@ public class ExceptionMiddleware
         var response = new
         {
             Message = GetErrorMessage(exception),
-            StatusCode = GetStatusCode(exception),
             Details = GetErrorDetails(exception),
-            Errors = GetValidationErrors(exception),
-            StackTrace = exception.StackTrace
+            Errors = GetValidationErrors(exception)
         };
 
-        context.Response.StatusCode = response.StatusCode;
+        context.Response.StatusCode = GetStatusCode(exception);
 
         var options = new JsonSerializerOptions
         {
@@ -77,10 +75,11 @@ public class ExceptionMiddleware
                     "23503" => "Foreign key violation",
                     _ => "An error occurred while saving the entity changes"
                 },
-            ValidationException valEx => "Validation failed",
-            ProfessionalServiceNotFoundException notFoundEx => notFoundEx.Message,
+            ValidationException valEx => valEx.Message,
+            ProfessionalNotFoundException notFoundEx => notFoundEx.Message,
+            UnauthorizedAccessException unauthorizedEx => unauthorizedEx.Message,
             JsonException jsonEx => "Invalid JSON format",
-            _ => exception.Message
+            _ => "Internal Server Error"
         };
     }
 
@@ -91,15 +90,16 @@ public class ExceptionMiddleware
             DbUpdateException dbEx when dbEx.InnerException is PostgresException pgEx =>
                 pgEx.SqlState switch
                 {
-                    "23505" => 409, // Conflict
-                    "23502" => 400, // Bad Request
-                    "23503" => 400, // Bad Request
-                    _ => 500
+                    "23505" => (int)HttpStatusCode.Conflict,
+                    "23502" => (int)HttpStatusCode.BadRequest,
+                    "23503" => (int)HttpStatusCode.BadRequest,
+                    _ => (int)HttpStatusCode.InternalServerError
                 },
-            ValidationException => 400,
-            ProfessionalServiceNotFoundException => 404,
-            JsonException => 400,
-            _ => 500
+            ValidationException => (int)HttpStatusCode.BadRequest,
+            ProfessionalNotFoundException => (int)HttpStatusCode.NotFound,
+            UnauthorizedAccessException => (int)HttpStatusCode.Unauthorized,
+            JsonException => (int)HttpStatusCode.BadRequest,
+            _ => (int)HttpStatusCode.InternalServerError
         };
     }
 
@@ -113,7 +113,7 @@ public class ExceptionMiddleware
             }
             return dbEx.InnerException?.Message;
         }
-        return exception.InnerException?.Message;
+        return exception.Message;
     }
 
     private static object? GetValidationErrors(Exception exception)
