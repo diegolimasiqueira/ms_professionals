@@ -1,0 +1,27 @@
+# Arquivos de build
+[Bb]in/
+[Oo]bj/
+
+# Arquivos de usuário
+*.user
+*.userosscache
+*.suo
+*.userprefs
+
+# Arquivos de IDE
+.vs/
+.vscode/
+*.swp
+*.*~
+project.lock.json
+.DS_Store
+*.pyc
+nupkg/
+
+# Arquivos de log
+*.log
+
+# Arquivos temporários
+[Tt]emp/
+*.tmp
+*.temp 
