@@ -51,18 +51,13 @@ public class AddMultipleProfessionalServicesCommandHandler : IRequestHandler<Add
         // Get all professional professions for this professional
         var professionalProfessions = await _professionalProfessionRepository.GetByProfessionalIdAsync(professionalProfession.ProfessionalId, cancellationToken);
         
-        // Count total services across all professions
-        int totalServices = 0;
-        foreach (var pp in professionalProfessions)
-        {
-            var services = await _professionalServiceRepository.GetByProfessionalProfessionIdAsync(pp.Id, cancellationToken);
-            totalServices += services.Count();
-        }
+        // Get current services for this profession
+        var currentServices = await _professionalServiceRepository.GetByProfessionalProfessionIdAsync(request.ProfessionalProfessionId, cancellationToken);
 
-        // Check if adding new services would exceed the limit
-        if (totalServices + request.ServiceIds.Count() > 10)
+        // Check if adding new services would exceed the limit for this profession
+        if (currentServices.Count() + request.ServiceIds.Count() > 10)
         {
-            throw new ProfessionalServiceLimitExceededException("Adding these services would exceed the limit of 10 services per professional");
+            throw new ProfessionalServiceLimitExceededException("Adding these services would exceed the limit of 10 services per profession");
         }
 
         var responses = new List<AddProfessionalServiceCommandResponse>();

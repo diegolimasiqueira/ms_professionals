@@ -4,9 +4,8 @@
     <DataCollectors>
       <DataCollector friendlyName="XPlat Code Coverage">
         <Configuration>
-          <Format>cobertura,html</Format>
-          
-          <Exclude>[*]Program,[**]*/Program.cs,[*]*.SwaggerConfiguration,[MSProfessionals.Infrastructure]*</Exclude>
+          <Format>cobertura,html</Format>          
+          <Exclude>[*]Program,[**]*/Program.cs,[*]*.SwaggerConfiguration,[*]*.MediatRExtensions,[**]*/MediatRExtensions.cs,[MSProfessionals.Infrastructure]*</Exclude>
           <Include>[MSProfessionals.*]*</Include>
           <SingleHit>false</SingleHit>
           <UseSourceLink>false</UseSourceLink>

@@ -9,7 +9,7 @@ public class ProfessionalServiceNotFoundException : Exception
     /// Initializes a new instance of the <see cref="ProfessionalServiceNotFoundException"/> class.
     /// </summary>
     /// <param name="message">Error message</param>
-    public ProfessionalServiceNotFoundException(string message) : base(message)
+    public ProfessionalServiceNotFoundException(string? message) : base(message ?? "Professional service not found")
     {
     }
 } 

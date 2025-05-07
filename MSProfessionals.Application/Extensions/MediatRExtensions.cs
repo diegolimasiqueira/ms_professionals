@@ -1,14 +1,23 @@
-using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
+using MediatR;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace MSProfessionals.Application.Extensions
+namespace MSProfessionals.Application.Extensions;
+
+/// <summary>
+/// Extension methods for MediatR
+/// </summary>
+public static class MediatRExtensions
 {
-    public static class MediatRExtensions
+    /// <summary>
+    /// Adds MediatR to the service collection
+    /// </summary>
+    /// <param name="services">The service collection</param>
+    /// <param name="assembly">The assembly to scan for handlers</param>
+    /// <returns>The service collection</returns>
+    public static IServiceCollection AddMediatR(this IServiceCollection services, Assembly assembly)
     {
-        public static IServiceCollection AddMediatRConfiguration(this IServiceCollection services)
-        {
-            services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
-            return services;
-        }
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(assembly));
+        return services;
     }
 } 

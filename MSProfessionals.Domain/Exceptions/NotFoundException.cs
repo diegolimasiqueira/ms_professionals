@@ -9,7 +9,7 @@ public class NotFoundException : Exception
     /// Initializes a new instance of the NotFoundException
     /// </summary>
     /// <param name="message">Error message</param>
-    public NotFoundException(string message) : base(message)
+    public NotFoundException(string? message) : base(message ?? "Not found")
     {
     }
 } 
