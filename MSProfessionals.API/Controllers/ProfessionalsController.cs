@@ -1,12 +1,7 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
 using MSProfessionals.Application.Commands.Professional;
 using MSProfessionals.Domain.Exceptions;
-using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
 
 namespace MSProfessionals.API.Controllers;
 

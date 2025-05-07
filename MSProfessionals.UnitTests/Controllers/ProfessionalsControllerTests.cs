@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -10,7 +6,6 @@ using MSProfessionals.API.Controllers;
 using MSProfessionals.Application.Commands.Professional;
 using MSProfessionals.Domain.Entities;
 using MSProfessionals.Domain.Exceptions;
-using Xunit;
 
 namespace MSProfessionals.UnitTests.Controllers;
 

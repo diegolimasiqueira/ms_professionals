@@ -1,4 +1,3 @@
-using System;
 using MediatR;
 
 namespace MSProfessionals.Application.Commands.ProfessionalAddress;

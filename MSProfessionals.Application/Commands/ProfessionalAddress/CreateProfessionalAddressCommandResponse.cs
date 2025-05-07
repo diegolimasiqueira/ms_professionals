@@ -1,5 +1,3 @@
-using System;
-
 namespace MSProfessionals.Application.Commands.ProfessionalAddress;
 
 /// <summary>

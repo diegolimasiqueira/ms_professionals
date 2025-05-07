@@ -5,7 +5,6 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using MSProfessionals.API.Middleware;
 using MSProfessionals.Domain.Exceptions;
-using Xunit;
 
 namespace MSProfessionals.UnitTests.Middleware;
 

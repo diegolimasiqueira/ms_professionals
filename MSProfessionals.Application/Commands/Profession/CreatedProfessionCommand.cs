@@ -1,7 +1,5 @@
-using System;
 using System.ComponentModel.DataAnnotations;
 using MediatR;
-using MSProfessionals.Application.Commands.Professional;
 
 namespace MSProfessionals.Application.Commands.Profession;
 

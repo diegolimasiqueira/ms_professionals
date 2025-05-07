@@ -1,15 +1,7 @@
 using Moq;
 using MSProfessionals.Domain.Interfaces;
 using MSProfessionals.Application.Commands.Professional;
-using MSProfessionals.Domain.Entities;
 using MSProfessionals.Domain.Exceptions;
-using Xunit;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using System;
-using ValidationException = MSProfessionals.Domain.Exceptions.ValidationException;
-using System.ComponentModel.DataAnnotations;
 
 namespace MSProfessionals.UnitTests.Handlers.Professional;
 

@@ -1,5 +1,3 @@
-using MSProfessionals.Domain.Entities;
-using Xunit;
 using TimeZone = MSProfessionals.Domain.Entities.TimeZone;
 
 namespace MSProfessionals.UnitTests.Domain.Entities

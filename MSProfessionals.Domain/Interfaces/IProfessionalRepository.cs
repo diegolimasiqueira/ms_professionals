@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using MSProfessionals.Domain.Entities;
-using System.Threading;
 using System.Linq.Expressions;
 namespace MSProfessionals.Domain.Interfaces
 {

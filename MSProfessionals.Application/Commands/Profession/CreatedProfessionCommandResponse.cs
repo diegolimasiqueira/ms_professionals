@@ -1,4 +1,3 @@
-using MSProfessionals.Domain.Entities;
 namespace MSProfessionals.Application.Commands.Profession;
 
 /// <summary>

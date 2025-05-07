@@ -5,7 +5,6 @@ using MSProfessionals.Infrastructure.Configurations;
 using MSProfessionals.Infrastructure.Context;
 using MSProfessionals.Domain.Interfaces;
 using MSProfessionals.Infrastructure.Repositories;
-using MSProfessionals.Domain.Entities;
 
 namespace MSProfessionals.Infrastructure.Extensions
 {

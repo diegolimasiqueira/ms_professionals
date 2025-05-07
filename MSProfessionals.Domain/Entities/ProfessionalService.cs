@@ -1,5 +1,3 @@
-using System;
-
 namespace MSProfessionals.Domain.Entities;
 
 /// <summary>

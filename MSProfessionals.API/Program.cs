@@ -2,7 +2,6 @@ using MSProfessionals.API.Extensions;
 using MSProfessionals.Infrastructure.Extensions;
 using MSProfessionals.Application.Commands.Professional;
 using MSProfessionals.API.Configurations;
-using MSProfessionals.Infrastructure.Context;
 using HealthChecks.UI.Client;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;

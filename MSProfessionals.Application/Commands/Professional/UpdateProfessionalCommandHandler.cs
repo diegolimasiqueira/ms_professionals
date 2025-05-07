@@ -1,9 +1,5 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using MSProfessionals.Domain.Entities;
 using MSProfessionals.Domain.Interfaces;
 using MSProfessionals.Domain.Exceptions;
 

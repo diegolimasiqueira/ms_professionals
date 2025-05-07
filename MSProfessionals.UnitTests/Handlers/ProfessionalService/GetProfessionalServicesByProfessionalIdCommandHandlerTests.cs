@@ -1,14 +1,7 @@
 using Moq;
 using MSProfessionals.Domain.Interfaces;
 using MSProfessionals.Application.Commands.ProfessionalService;
-using MSProfessionals.Domain.Entities;
 using MSProfessionals.Domain.Exceptions;
-using Xunit;
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Linq;
 using System.Linq.Expressions;
 
 namespace MSProfessionals.UnitTests.Handlers.ProfessionalService;

@@ -1,11 +1,7 @@
-using System;
 using System.ComponentModel.DataAnnotations;
-using System.Threading;
-using System.Threading.Tasks;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
-using MSProfessionals.Domain.Entities;
 using MSProfessionals.Domain.Interfaces;
 using MSProfessionals.Domain.Exceptions;
 

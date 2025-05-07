@@ -1,5 +1,4 @@
 using MSProfessionals.Domain.Entities;
-using Xunit;
 
 namespace MSProfessionals.UnitTests.Domain.Entities
 {

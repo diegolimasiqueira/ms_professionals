@@ -2,8 +2,6 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using MSProfessionals.Application.Commands.ProfessionalAddress;
 using System.ComponentModel.DataAnnotations;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace MSProfessionals.API.Controllers;
 

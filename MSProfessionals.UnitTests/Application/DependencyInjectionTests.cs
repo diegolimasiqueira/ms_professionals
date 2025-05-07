@@ -1,7 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using MSProfessionals.Application;
 using MediatR;
-using Xunit;
 
 namespace MSProfessionals.UnitTests.Application;
 

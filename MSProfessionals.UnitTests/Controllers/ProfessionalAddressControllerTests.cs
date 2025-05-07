@@ -1,14 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using MSProfessionals.API.Controllers;
 using MSProfessionals.Application.Commands.ProfessionalAddress;
 using MSProfessionals.Domain.Entities;
-using Xunit;
 
 namespace MSProfessionals.UnitTests.Controllers;
 

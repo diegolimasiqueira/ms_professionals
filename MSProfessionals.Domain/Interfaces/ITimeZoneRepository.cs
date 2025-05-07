@@ -1,9 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using MSProfessionals.Domain.Entities;
-
 namespace MSProfessionals.Domain.Interfaces;
 
 /// <summary>

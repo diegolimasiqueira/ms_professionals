@@ -1,6 +1,3 @@
-using System;
-using MSProfessionals.Domain.Entities;
-
 namespace MSProfessionals.Application.Commands.Professional;
 
 /// <summary>
