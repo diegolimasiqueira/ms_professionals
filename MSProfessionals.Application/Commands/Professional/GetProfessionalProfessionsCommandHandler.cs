@@ -46,7 +46,7 @@ public class GetProfessionalProfessionsCommandHandler : IRequestHandler<GetProfe
 
         if (request.ProfessionalId == Guid.Empty)
         {
-            throw new ArgumentException("Professional ID cannot be empty", nameof(request.ProfessionalId));
+            throw new InvalidOperationException("Professional ID cannot be empty");
         }
 
         // Check if professional exists

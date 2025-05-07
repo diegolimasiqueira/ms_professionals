@@ -1,7 +1,7 @@
 using Moq;
 using MSProfessionals.Domain.Interfaces;
 using MSProfessionals.Application.Commands.Service;
-using MSProfessionals.Domain.Entities;
+
 
 namespace MSProfessionals.UnitTests.Handlers.Service
 {
@@ -22,7 +22,7 @@ namespace MSProfessionals.UnitTests.Handlers.Service
             // Arrange
             var command = new GetServicesCommand { PageNumber = 1, PageSize = 10 };
             var skip = (command.PageNumber - 1) * command.PageSize;
-            var services = new List<Domain.Entities.Service>
+            var services = new List<MSProfessionals.Domain.Entities.Service>
             {
                 new() { Id = Guid.NewGuid(), Name = "Service 1" },
                 new() { Id = Guid.NewGuid(), Name = "Service 2" }
@@ -55,7 +55,7 @@ namespace MSProfessionals.UnitTests.Handlers.Service
             var skip = (command.PageNumber - 1) * command.PageSize;
 
             _serviceRepositoryMock.Setup(x => x.GetAllAsync(skip, command.PageSize, command.Name, It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new List<Domain.Entities.Service>());
+                .ReturnsAsync(new List<MSProfessionals.Domain.Entities.Service>());
             _serviceRepositoryMock.Setup(x => x.CountAsync(command.Name, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(0);
 

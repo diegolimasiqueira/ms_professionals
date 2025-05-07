@@ -32,38 +32,27 @@ public class DeleteProfessionalCommandHandler : IRequestHandler<DeleteProfession
     /// <returns>Unit value</returns>
     public async Task<Unit> Handle(DeleteProfessionalCommand request, CancellationToken cancellationToken)
     {
-        try
+        // Validate request
+        if (request == null)
         {
-            // Validate request
-            if (request == null)
-            {
-                throw new ArgumentNullException(nameof(request));
-            }
-
-            if (request.Id == Guid.Empty)
-            {
-                throw new ArgumentException("Professional ID cannot be empty", nameof(request.Id));
-            }
-
-            // Get professional
-            var professional = await _professionalRepository.GetByIdAsync(request.Id);
-            if (professional == null)
-            {
-                throw new ProfessionalNotFoundException($"Professional with ID {request.Id} not found");
-            }
-
-            // Delete professional
-            await _professionalRepository.DeleteAsync(request.Id);
-
-            return Unit.Value;
+            throw new ArgumentNullException(nameof(request));
         }
-        catch (ProfessionalNotFoundException)
+
+        if (request.Id == Guid.Empty)
         {
-            throw;
+            throw new InvalidOperationException("Professional ID cannot be empty");
         }
-        catch (Exception ex)
+
+        // Get professional
+        var professional = await _professionalRepository.GetByIdAsync(request.Id);
+        if (professional == null)
         {
-            throw new InvalidOperationException("An unexpected error occurred while deleting the professional", ex);
+            throw new ProfessionalNotFoundException($"Professional with ID {request.Id} not found");
         }
+
+        // Delete professional
+        await _professionalRepository.DeleteAsync(request.Id);
+
+        return Unit.Value;
     }
 } 

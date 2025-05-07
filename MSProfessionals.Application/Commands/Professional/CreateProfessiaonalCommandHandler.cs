@@ -40,6 +40,10 @@ public class CreateProfessionalCommandHandler : IRequestHandler<CreateProfession
             throw new ArgumentNullException(nameof(request));
         }
 
+        // Validate the request using DataAnnotations
+        var validationContext = new ValidationContext(request);
+        Validator.ValidateObject(request, validationContext, validateAllProperties: true);
+
         // Check if professional with same email already exists
         var existingProfessional = await _professionalRepository.GetByEmailAsync(request.Email, cancellationToken);
         if (existingProfessional != null)
