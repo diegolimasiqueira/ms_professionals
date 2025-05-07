@@ -2,6 +2,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using MSProfessionals.Domain.Interfaces;
 using MSProfessionals.Domain.Exceptions;
+using System.ComponentModel.DataAnnotations;
 
 namespace MSProfessionals.Application.Commands.Professional;
 
@@ -37,8 +38,16 @@ public class UpdateProfessionalCommandHandler : IRequestHandler<UpdateProfession
                 throw new ArgumentNullException(nameof(request));
             }
 
+            // Validate command
+            var validationContext = new ValidationContext(request);
+            var validationResults = new List<ValidationResult>();
+            if (!Validator.TryValidateObject(request, validationContext, validationResults, true))
+            {
+                throw new MSProfessionals.Domain.Exceptions.ValidationException(validationResults.First().ErrorMessage);
+            }
+
             // Get existing professional
-            var professional = await _professionalRepository.GetByIdAsync(request.Id);
+            var professional = await _professionalRepository.GetByIdAsync(request.Id, cancellationToken);
             if (professional == null)
             {
                 throw new ProfessionalNotFoundException($"Professional with ID {request.Id} not found");
@@ -68,20 +77,20 @@ public class UpdateProfessionalCommandHandler : IRequestHandler<UpdateProfession
             professional.UpdatedAt = DateTime.UtcNow;
 
             // Save changes
-            await _professionalRepository.UpdateAsync(professional);
+            await _professionalRepository.UpdateAsync(professional, cancellationToken);
 
             // Return response
             return new UpdateProfessionalCommandResponse(professional);
-        }
-        catch (System.ComponentModel.DataAnnotations.ValidationException ex)
-        {
-            throw new Domain.Exceptions.ValidationException($"Validation failed: {ex.Message}", ex);
         }
         catch (DbUpdateException ex)
         {
             throw new InvalidOperationException("Failed to update professional due to database error", ex);
         }
-        catch (Exception ex)
+        catch (Exception ex) when (
+            ex is not ArgumentNullException &&
+            ex is not MSProfessionals.Domain.Exceptions.ValidationException &&
+            ex is not ProfessionalNotFoundException &&
+            ex is not UniqueConstraintViolationException)
         {
             throw new InvalidOperationException("An unexpected error occurred while updating the professional", ex);
         }

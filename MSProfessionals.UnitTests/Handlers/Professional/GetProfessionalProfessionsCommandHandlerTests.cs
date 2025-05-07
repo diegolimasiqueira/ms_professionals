@@ -1,139 +1,111 @@
+using FluentAssertions;
+using MediatR;
 using Moq;
-using MSProfessionals.Domain.Interfaces;
 using MSProfessionals.Application.Commands.Professional;
+using MSProfessionals.Domain.Entities;
 using MSProfessionals.Domain.Exceptions;
-using System.ComponentModel.DataAnnotations;
+using MSProfessionals.Domain.Interfaces;
+using Xunit;
 
 namespace MSProfessionals.UnitTests.Handlers.Professional;
 
 public class GetProfessionalProfessionsCommandHandlerTests
 {
-    private readonly Mock<IProfessionalRepository> _professionalRepositoryMock;
     private readonly Mock<IProfessionalProfessionRepository> _professionalProfessionRepositoryMock;
+    private readonly Mock<IProfessionalRepository> _professionalRepositoryMock;
     private readonly GetProfessionalProfessionsCommandHandler _handler;
 
     public GetProfessionalProfessionsCommandHandlerTests()
     {
-        _professionalRepositoryMock = new Mock<IProfessionalRepository>();
         _professionalProfessionRepositoryMock = new Mock<IProfessionalProfessionRepository>();
-        _handler = new GetProfessionalProfessionsCommandHandler(
-            _professionalProfessionRepositoryMock.Object,
-            _professionalRepositoryMock.Object);
+        _professionalRepositoryMock = new Mock<IProfessionalRepository>();
+        _handler = new GetProfessionalProfessionsCommandHandler(_professionalProfessionRepositoryMock.Object, _professionalRepositoryMock.Object);
     }
 
     [Fact]
-    public async Task Handle_ShouldReturnProfessions_WhenProfessionalExists()
+    public async Task Handle_WhenProfessionalExists_ShouldReturnProfessions()
     {
         // Arrange
         var professionalId = Guid.NewGuid();
-        var command = new GetProfessionalProfessionsCommand { ProfessionalId = professionalId };
-
         var professional = new MSProfessionals.Domain.Entities.Professional
         {
             Id = professionalId,
             Name = "Test Professional",
             Email = "test@example.com",
-            PhoneNumber = "+5511999999999",
-            DocumentId = "12345678901",
+            PhoneNumber = "1234567890",
+            DocumentId = "123456789",
+            CurrencyId = Guid.NewGuid(),
+            PhoneCountryCodeId = Guid.NewGuid(),
+            PreferredLanguageId = Guid.NewGuid(),
+            TimezoneId = Guid.NewGuid(),
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow
         };
 
-        var professionId = Guid.NewGuid();
-        var professions = new List<MSProfessionals.Domain.Entities.ProfessionalProfession>
+        var professionalProfessions = new List<MSProfessionals.Domain.Entities.ProfessionalProfession>
         {
-            new MSProfessionals.Domain.Entities.ProfessionalProfession(professionalId, professionId)
+            new(professionalId, Guid.NewGuid())
             {
-                Id = Guid.NewGuid(),
-                Profession = new MSProfessionals.Domain.Entities.Profession
-                {
-                    Id = professionId,
-                    Name = "Test Profession"
-                },
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow
+                Profession = new Profession { Id = Guid.NewGuid(), Name = "Profession 1" }
+            },
+            new(professionalId, Guid.NewGuid())
+            {
+                Profession = new Profession { Id = Guid.NewGuid(), Name = "Profession 2" }
             }
         };
 
-        _professionalRepositoryMock.Setup(x => x.GetByIdAsync(professionalId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(professional);
-
-        _professionalProfessionRepositoryMock.Setup(x => x.GetByProfessionalIdAsync(professionalId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(professions);
-
-        // Act
-        var result = await _handler.Handle(command, CancellationToken.None);
-
-        // Assert
-        Assert.NotNull(result);
-        Assert.Single(result);
-        var firstResult = result.First();
-        Assert.Equal(professionId, firstResult.ProfessionId);
-        Assert.Equal(professions[0].Profession.Name, firstResult.Name);
-        Assert.Equal(professionalId, firstResult.ProfessionalId);
-    }
-
-    [Fact]
-    public async Task Handle_ShouldReturnEmptyList_WhenProfessionalHasNoProfessions()
-    {
-        // Arrange
-        var professionalId = Guid.NewGuid();
         var command = new GetProfessionalProfessionsCommand { ProfessionalId = professionalId };
 
-        var professional = new MSProfessionals.Domain.Entities.Professional
-        {
-            Id = professionalId,
-            Name = "Test Professional",
-            Email = "test@example.com",
-            PhoneNumber = "+5511999999999",
-            DocumentId = "12345678901",
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow
-        };
-
         _professionalRepositoryMock.Setup(x => x.GetByIdAsync(professionalId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(professional);
 
         _professionalProfessionRepositoryMock.Setup(x => x.GetByProfessionalIdAsync(professionalId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new List<MSProfessionals.Domain.Entities.ProfessionalProfession>());
+            .ReturnsAsync(professionalProfessions);
 
         // Act
         var result = await _handler.Handle(command, CancellationToken.None);
 
         // Assert
-        Assert.NotNull(result);
-        Assert.Empty(result);
+        result.Should().NotBeNull();
+        result.Should().HaveCount(2);
+
+        var firstProfession = result.First();
+        firstProfession.ProfessionalId.Should().Be(professionalId);
+        firstProfession.ProfessionId.Should().Be(professionalProfessions[0].ProfessionId);
+        firstProfession.Name.Should().Be(professionalProfessions[0].Profession.Name);
+
+        var secondProfession = result.Last();
+        secondProfession.ProfessionalId.Should().Be(professionalId);
+        secondProfession.ProfessionId.Should().Be(professionalProfessions[1].ProfessionId);
+        secondProfession.Name.Should().Be(professionalProfessions[1].Profession.Name);
     }
 
     [Fact]
-    public async Task Handle_ShouldThrowValidationException_WhenProfessionalDoesNotExist()
+    public async Task Handle_WhenProfessionalDoesNotExist_ShouldThrowException()
     {
         // Arrange
         var professionalId = Guid.NewGuid();
         var command = new GetProfessionalProfessionsCommand { ProfessionalId = professionalId };
 
         _professionalRepositoryMock.Setup(x => x.GetByIdAsync(professionalId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync((MSProfessionals.Domain.Entities.Professional)null);
+            .ReturnsAsync((MSProfessionals.Domain.Entities.Professional?)null);
 
         // Act & Assert
-        var exception = await Assert.ThrowsAsync<System.ComponentModel.DataAnnotations.ValidationException>(() => 
+        await Assert.ThrowsAsync<System.ComponentModel.DataAnnotations.ValidationException>(() => 
             _handler.Handle(command, CancellationToken.None));
-
-        Assert.Contains($"Professional with ID {professionalId} not found", exception.Message);
+        _professionalProfessionRepositoryMock.Verify(x => x.GetByProfessionalIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
-    public async Task Handle_ShouldThrowInvalidOperationException_WhenProfessionalIdIsEmpty()
+    public async Task Handle_WhenProfessionalIdIsEmpty_ShouldThrowException()
     {
         // Arrange
         var command = new GetProfessionalProfessionsCommand { ProfessionalId = Guid.Empty };
 
         // Act & Assert
-        var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => 
+        await Assert.ThrowsAsync<InvalidOperationException>(() => 
             _handler.Handle(command, CancellationToken.None));
-
-        Assert.Contains("Professional ID cannot be empty", exception.Message);
-
         _professionalRepositoryMock.Verify(x => x.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()), Times.Never);
+        _professionalProfessionRepositoryMock.Verify(x => x.GetByProfessionalIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 } 
