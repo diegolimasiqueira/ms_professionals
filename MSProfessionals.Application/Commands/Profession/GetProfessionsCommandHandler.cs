@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using MediatR;
 using MSProfessionals.Domain.Interfaces;
 
@@ -22,6 +23,9 @@ public class GetProfessionsCommandHandler : IRequestHandler<GetProfessionsComman
     /// <inheritdoc />
     public async Task<GetProfessionsCommandResponse> Handle(GetProfessionsCommand request, CancellationToken cancellationToken)
     {
+        // Validate the request using DataAnnotations
+        Validator.ValidateObject(request, new ValidationContext(request), validateAllProperties: true);
+
         var skip = (request.PageNumber - 1) * request.PageSize;
         var professions = await _professionRepository.GetAllAsync(skip, request.PageSize, request.Name, cancellationToken);
         var totalCount = await _professionRepository.CountAsync(request.Name, cancellationToken);

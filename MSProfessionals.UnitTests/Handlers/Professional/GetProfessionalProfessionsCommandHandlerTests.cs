@@ -2,6 +2,7 @@ using Moq;
 using MSProfessionals.Domain.Interfaces;
 using MSProfessionals.Application.Commands.Professional;
 using MSProfessionals.Domain.Exceptions;
+using System.ComponentModel.DataAnnotations;
 
 namespace MSProfessionals.UnitTests.Handlers.Professional;
 
@@ -105,7 +106,7 @@ public class GetProfessionalProfessionsCommandHandlerTests
     }
 
     [Fact]
-    public async Task Handle_ShouldThrowProfessionalNotFoundException_WhenProfessionalDoesNotExist()
+    public async Task Handle_ShouldThrowValidationException_WhenProfessionalDoesNotExist()
     {
         // Arrange
         var professionalId = Guid.NewGuid();
@@ -115,8 +116,10 @@ public class GetProfessionalProfessionsCommandHandlerTests
             .ReturnsAsync((MSProfessionals.Domain.Entities.Professional)null);
 
         // Act & Assert
-        await Assert.ThrowsAsync<ProfessionalNotFoundException>(() => 
+        var exception = await Assert.ThrowsAsync<System.ComponentModel.DataAnnotations.ValidationException>(() => 
             _handler.Handle(command, CancellationToken.None));
+
+        Assert.Contains($"Professional with ID {professionalId} not found", exception.Message);
     }
 
     [Fact]

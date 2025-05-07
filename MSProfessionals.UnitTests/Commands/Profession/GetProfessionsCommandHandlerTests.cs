@@ -33,17 +33,17 @@ public class GetProfessionsCommandHandlerTests
 
         var professions = new List<MSProfessionals.Domain.Entities.Profession>
         {
-            new() { Id = Guid.NewGuid(), Name = "Médico" },
-            new() { Id = Guid.NewGuid(), Name = "Dentista" }
-        };
+            new() { Id = Guid.NewGuid(), Name = "Dentista" },
+            new() { Id = Guid.NewGuid(), Name = "Médico" }
+        }.OrderBy(p => p.Name).ToList();
 
         _professionRepositoryMock
-            .Setup(x => x.CountAsync(null, It.IsAny<CancellationToken>()))
+            .Setup(x => x.CountAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(professions.Count);
 
         _professionRepositoryMock
-            .Setup(x => x.GetAllAsync(It.IsAny<int>(), It.IsAny<int>(), null, It.IsAny<CancellationToken>()))
-            .ReturnsAsync((IEnumerable<MSProfessionals.Domain.Entities.Profession>)professions);
+            .Setup(x => x.GetAllAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(professions);
 
         // Act
         var result = await _handler.Handle(request, CancellationToken.None);
@@ -71,7 +71,7 @@ public class GetProfessionsCommandHandlerTests
         var professions = new List<MSProfessionals.Domain.Entities.Profession>
         {
             new() { Id = Guid.NewGuid(), Name = "Médico" }
-        };
+        }.OrderBy(p => p.Name).ToList();
 
         _professionRepositoryMock
             .Setup(x => x.CountAsync(request.Name, It.IsAny<CancellationToken>()))
@@ -79,7 +79,7 @@ public class GetProfessionsCommandHandlerTests
 
         _professionRepositoryMock
             .Setup(x => x.GetAllAsync(It.IsAny<int>(), It.IsAny<int>(), request.Name, It.IsAny<CancellationToken>()))
-            .ReturnsAsync((IEnumerable<MSProfessionals.Domain.Entities.Profession>)professions);
+            .ReturnsAsync(professions);
 
         // Act
         var result = await _handler.Handle(request, CancellationToken.None);
@@ -104,11 +104,11 @@ public class GetProfessionsCommandHandlerTests
         };
 
         _professionRepositoryMock
-            .Setup(x => x.CountAsync(null, It.IsAny<CancellationToken>()))
+            .Setup(x => x.CountAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(0);
 
         _professionRepositoryMock
-            .Setup(x => x.GetAllAsync(It.IsAny<int>(), It.IsAny<int>(), null, It.IsAny<CancellationToken>()))
+            .Setup(x => x.GetAllAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((IEnumerable<MSProfessionals.Domain.Entities.Profession>)new List<MSProfessionals.Domain.Entities.Profession>());
 
         // Act

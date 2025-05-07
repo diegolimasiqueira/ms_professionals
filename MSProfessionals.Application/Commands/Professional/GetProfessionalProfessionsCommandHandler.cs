@@ -46,7 +46,7 @@ public class GetProfessionalProfessionsCommandHandler : IRequestHandler<GetProfe
         var professional = await _professionalRepository.GetByIdAsync(request.ProfessionalId, cancellationToken);
         if (professional == null)
         {
-            throw new ProfessionalNotFoundException($"Professional with ID {request.ProfessionalId} not found");
+            throw new System.ComponentModel.DataAnnotations.ValidationException($"Professional with ID {request.ProfessionalId} not found");
         }
 
         // Get professional professions

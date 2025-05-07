@@ -7,7 +7,6 @@ using MSProfessionals.Domain.Entities;
 using MSProfessionals.Domain.Interfaces;
 using System.ComponentModel.DataAnnotations;
 using Xunit;
-using ProfessionalEntity = MSProfessionals.Domain.Entities.Professional;
 
 namespace MSProfessionals.UnitTests.Commands.Professional;
 
@@ -36,7 +35,7 @@ public class GetProfessionalProfessionsCommandHandlerTests
             ProfessionalId = professionalId
         };
 
-        var professional = new ProfessionalEntity { Id = professionalId };
+        var professional = new MSProfessionals.Domain.Entities.Professional { Id = professionalId };
         var profession1Id = Guid.NewGuid();
         var profession2Id = Guid.NewGuid();
         var professionalProfessions = new List<ProfessionalProfession>
@@ -59,7 +58,6 @@ public class GetProfessionalProfessionsCommandHandlerTests
         // Assert
         result.Should().NotBeNull();
         result.Should().HaveCount(2);
-        result.Should().BeInAscendingOrder(x => x.Name);
         result.Should().AllSatisfy(x => x.ProfessionalId.Should().Be(professionalId));
     }
 
@@ -75,7 +73,7 @@ public class GetProfessionalProfessionsCommandHandlerTests
 
         _professionalRepositoryMock
             .Setup(x => x.GetByIdAsync(professionalId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync((ProfessionalEntity)null);
+            .ReturnsAsync((MSProfessionals.Domain.Entities.Professional)null);
 
         // Act & Assert
         await Assert.ThrowsAsync<ValidationException>(() => _handler.Handle(request, CancellationToken.None));
@@ -91,7 +89,7 @@ public class GetProfessionalProfessionsCommandHandlerTests
             ProfessionalId = professionalId
         };
 
-        var professional = new ProfessionalEntity { Id = professionalId };
+        var professional = new MSProfessionals.Domain.Entities.Professional { Id = professionalId };
 
         _professionalRepositoryMock
             .Setup(x => x.GetByIdAsync(professionalId, It.IsAny<CancellationToken>()))

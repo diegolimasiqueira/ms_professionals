@@ -44,7 +44,7 @@ public class GetCurrenciesCommandHandlerTests
 
         _currencyRepositoryMock
             .Setup(x => x.GetAllAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(currencies);
+            .ReturnsAsync((IEnumerable<MSProfessionals.Domain.Entities.Currency>)currencies);
 
         // Act
         var result = await _handler.Handle(request, CancellationToken.None);

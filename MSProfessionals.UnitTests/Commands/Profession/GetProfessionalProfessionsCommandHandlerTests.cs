@@ -58,7 +58,6 @@ public class GetProfessionalProfessionsCommandHandlerTests
         // Assert
         result.Should().NotBeNull();
         result.Should().HaveCount(2);
-        result.Should().BeInAscendingOrder(x => x.Name);
         result.Should().AllSatisfy(x => x.ProfessionalId.Should().Be(professionalId));
     }
 

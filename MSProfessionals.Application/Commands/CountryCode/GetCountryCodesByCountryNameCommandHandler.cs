@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using MediatR;
 using MSProfessionals.Domain.Interfaces;
 
@@ -22,6 +23,9 @@ public class GetCountryCodesByCountryNameCommandHandler : IRequestHandler<GetCou
     /// <inheritdoc />
     public async Task<GetCountryCodesCommandResponse> Handle(GetCountryCodesByCountryNameCommand request, CancellationToken cancellationToken)
     {
+        // Validate the request using DataAnnotations
+        Validator.ValidateObject(request, new ValidationContext(request), validateAllProperties: true);
+
         var skip = (request.PageNumber - 1) * request.PageSize;
         var take = request.PageSize;
 
