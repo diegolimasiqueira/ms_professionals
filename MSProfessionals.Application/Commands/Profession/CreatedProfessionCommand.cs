@@ -12,6 +12,7 @@ public class AddProfessionCommand : IRequest<CreatedProfessionCommandResponse>
     /// Professional ID
     /// </summary>
     [Required(ErrorMessage = "Professional ID is required")]
+    [RegularExpression(@"^(?!00000000-0000-0000-0000-000000000000$).*$", ErrorMessage = "Professional ID is required")]
     public Guid ProfessionalId { get; set; }
 
     /// <summary>

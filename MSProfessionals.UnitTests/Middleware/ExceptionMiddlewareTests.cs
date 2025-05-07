@@ -2,9 +2,11 @@ using System.Net;
 using System.Text.Json;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
 using Moq;
 using MSProfessionals.API.Middleware;
 using MSProfessionals.Domain.Exceptions;
+using Npgsql;
 
 namespace MSProfessionals.UnitTests.Middleware;
 
@@ -130,6 +132,97 @@ public class ExceptionMiddlewareTests
         // Assert
         Assert.True(nextCalled);
         Assert.Equal(200, _context.Response.StatusCode);
+    }
+
+    [Fact]
+    public async Task InvokeAsync_ShouldHandleDbUpdateException_UniqueConstraint()
+    {
+        // Arrange
+        var pgEx = new PostgresException("Duplicate key", "ERROR", "ERROR", "23505", "Detail", null, 1, 0);
+        var dbEx = new DbUpdateException("Database error", pgEx);
+        _next = _ => throw dbEx;
+        _middleware = new ExceptionMiddleware(_next);
+
+        // Act
+        await _middleware.InvokeAsync(_context);
+
+        // Assert
+        _context.Response.Body.Seek(0, SeekOrigin.Begin);
+        var reader = new StreamReader(_context.Response.Body);
+        var responseBody = await reader.ReadToEndAsync();
+        var response = JsonSerializer.Deserialize<ErrorResponse>(responseBody, GetJsonSerializerOptions());
+
+        Assert.Equal((int)HttpStatusCode.Conflict, _context.Response.StatusCode);
+        Assert.Equal("Unique constraint violation", response?.Message);
+        Assert.Contains("23505", response?.Details);
+    }
+
+    [Fact]
+    public async Task InvokeAsync_ShouldHandleDbUpdateException_NotNullViolation()
+    {
+        // Arrange
+        var pgEx = new PostgresException("Not null violation", "ERROR", "ERROR", "23502", "Detail", null, 1, 0);
+        var dbEx = new DbUpdateException("Database error", pgEx);
+        _next = _ => throw dbEx;
+        _middleware = new ExceptionMiddleware(_next);
+
+        // Act
+        await _middleware.InvokeAsync(_context);
+
+        // Assert
+        _context.Response.Body.Seek(0, SeekOrigin.Begin);
+        var reader = new StreamReader(_context.Response.Body);
+        var responseBody = await reader.ReadToEndAsync();
+        var response = JsonSerializer.Deserialize<ErrorResponse>(responseBody, GetJsonSerializerOptions());
+
+        Assert.Equal((int)HttpStatusCode.BadRequest, _context.Response.StatusCode);
+        Assert.Equal("Not null violation", response?.Message);
+        Assert.Contains("23502", response?.Details);
+    }
+
+    [Fact]
+    public async Task InvokeAsync_ShouldHandleDbUpdateException_ForeignKeyViolation()
+    {
+        // Arrange
+        var pgEx = new PostgresException("Foreign key violation", "ERROR", "ERROR", "23503", "Detail", null, 1, 0);
+        var dbEx = new DbUpdateException("Database error", pgEx);
+        _next = _ => throw dbEx;
+        _middleware = new ExceptionMiddleware(_next);
+
+        // Act
+        await _middleware.InvokeAsync(_context);
+
+        // Assert
+        _context.Response.Body.Seek(0, SeekOrigin.Begin);
+        var reader = new StreamReader(_context.Response.Body);
+        var responseBody = await reader.ReadToEndAsync();
+        var response = JsonSerializer.Deserialize<ErrorResponse>(responseBody, GetJsonSerializerOptions());
+
+        Assert.Equal((int)HttpStatusCode.BadRequest, _context.Response.StatusCode);
+        Assert.Equal("Foreign key violation", response?.Message);
+        Assert.Contains("23503", response?.Details);
+    }
+
+    [Fact]
+    public async Task InvokeAsync_ShouldHandleJsonException()
+    {
+        // Arrange
+        var exception = new JsonException("Invalid JSON");
+        _next = _ => throw exception;
+        _middleware = new ExceptionMiddleware(_next);
+
+        // Act
+        await _middleware.InvokeAsync(_context);
+
+        // Assert
+        _context.Response.Body.Seek(0, SeekOrigin.Begin);
+        var reader = new StreamReader(_context.Response.Body);
+        var responseBody = await reader.ReadToEndAsync();
+        var response = JsonSerializer.Deserialize<ErrorResponse>(responseBody, GetJsonSerializerOptions());
+
+        Assert.Equal((int)HttpStatusCode.BadRequest, _context.Response.StatusCode);
+        Assert.Equal("Invalid JSON format", response?.Message);
+        Assert.NotNull(response?.Errors);
     }
 
     private class ErrorResponse

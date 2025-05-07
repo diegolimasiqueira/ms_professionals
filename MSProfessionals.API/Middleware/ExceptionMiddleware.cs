@@ -61,16 +61,19 @@ public class ExceptionMiddleware
 
     private static string GetErrorMessage(Exception exception)
     {
+        if (exception is DbUpdateException dbEx && dbEx.InnerException is PostgresException pgEx)
+        {
+            return pgEx.SqlState switch
+            {
+                "23505" => "Unique constraint violation",
+                "23502" => "Not null violation",
+                "23503" => "Foreign key violation",
+                _ => "An error occurred while saving the entity changes"
+            };
+        }
+
         return exception switch
         {
-            DbUpdateException dbEx when dbEx.InnerException is PostgresException pgEx => 
-                pgEx.SqlState switch
-                {
-                    "23505" => "Unique constraint violation",
-                    "23502" => "Not null violation",
-                    "23503" => "Foreign key violation",
-                    _ => "An error occurred while saving the entity changes"
-                },
             ValidationException valEx => valEx.Message,
             ProfessionalNotFoundException notFoundEx => notFoundEx.Message,
             UnauthorizedAccessException unauthorizedEx => unauthorizedEx.Message,
@@ -81,16 +84,19 @@ public class ExceptionMiddleware
 
     private static int GetStatusCode(Exception exception)
     {
+        if (exception is DbUpdateException dbEx && dbEx.InnerException is PostgresException pgEx)
+        {
+            return pgEx.SqlState switch
+            {
+                "23505" => (int)HttpStatusCode.Conflict,
+                "23502" => (int)HttpStatusCode.BadRequest,
+                "23503" => (int)HttpStatusCode.BadRequest,
+                _ => (int)HttpStatusCode.InternalServerError
+            };
+        }
+
         return exception switch
         {
-            DbUpdateException dbEx when dbEx.InnerException is PostgresException pgEx =>
-                pgEx.SqlState switch
-                {
-                    "23505" => (int)HttpStatusCode.Conflict,
-                    "23502" => (int)HttpStatusCode.BadRequest,
-                    "23503" => (int)HttpStatusCode.BadRequest,
-                    _ => (int)HttpStatusCode.InternalServerError
-                },
             ValidationException => (int)HttpStatusCode.BadRequest,
             ProfessionalNotFoundException => (int)HttpStatusCode.NotFound,
             UnauthorizedAccessException => (int)HttpStatusCode.Unauthorized,

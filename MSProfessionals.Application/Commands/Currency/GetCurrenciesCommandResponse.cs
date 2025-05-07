@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace MSProfessionals.Application.Commands.Currency;
 
 /// <summary>
@@ -75,6 +77,15 @@ public class CurrencyItem
     /// <param name="description">Currency description</param>
     public CurrencyItem(Guid id, string code, string description)
     {
+        if (code == null)
+            throw new ArgumentNullException(nameof(code));
+        if (description == null)
+            throw new ArgumentNullException(nameof(description));
+        if (string.IsNullOrWhiteSpace(code))
+            throw new ArgumentException("Code cannot be empty or whitespace", nameof(code));
+        if (string.IsNullOrWhiteSpace(description))
+            throw new ArgumentException("Description cannot be empty or whitespace", nameof(description));
+
         Id = id;
         Code = code;
         Description = description;
