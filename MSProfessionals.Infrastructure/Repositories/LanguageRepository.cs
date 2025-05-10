@@ -57,7 +57,7 @@ public class LanguageRepository : ILanguageRepository
     {
         return await _context.Languages
             .AsNoTracking()
-            .Where(l => l.Description.Contains(description))
+            .Where(l => EF.Functions.ILike(l.Description, $"%{description}%"))
             .Skip(skip)
             .Take(take)
             .ToListAsync(cancellationToken);
@@ -67,7 +67,7 @@ public class LanguageRepository : ILanguageRepository
     public async Task<int> CountByDescriptionAsync(string description, CancellationToken cancellationToken = default)
     {
         return await _context.Languages
-            .Where(l => l.Description.Contains(description))
+            .Where(l => EF.Functions.ILike(l.Description, $"%{description}%"))
             .CountAsync(cancellationToken);
     }
 } 
