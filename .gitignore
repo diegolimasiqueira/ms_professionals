@@ -84,3 +84,5 @@ appsettings.*.json
 *.pidb
 *.svclog
 *.scc 
+
+los.yaml
