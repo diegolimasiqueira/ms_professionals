@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ms-profissionais
+  name: ms_professionals
   namespace: default
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: ms-profissionais
+      app: ms_professionals
   template:
     metadata:
       labels:
-        app: ms-profissionais
+        app: ms_professionals
     spec:
       containers:
-      - name: ms-profissionais
-        image: ms-profissionais:latest
+      - name: ms_professionals
+        image: ms_professionals:latest
         imagePullPolicy: Never
         ports:
         - containerPort: 80

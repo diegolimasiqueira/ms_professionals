@@ -9,5 +9,5 @@ resources:
   - db-secrets.yaml
 
 commonLabels:
-  app: ms-profissionais
+  app: ms_professionals
   environment: base 

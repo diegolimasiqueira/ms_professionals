@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: ms-profissionais-ingress
+  name: ms_professionals-ingress
   namespace: default
   annotations:
     kubernetes.io/ingress.class: kong
@@ -13,13 +13,13 @@ metadata:
     konghq.com/route-type: "v0"
 spec:
   rules:
-  - host: ms-profissionais.local
+  - host: ms_professionals.local
     http:
       paths:
       - path: /api
         pathType: Prefix
         backend:
           service:
-            name: ms-profissionais-service
+            name: ms_professionals-service
             port:
               number: 80 
