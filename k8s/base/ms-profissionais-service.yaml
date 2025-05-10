@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: ms_professionals-service
+  name: ms-professionals-service
   namespace: default
 spec:
   selector:
-    app: ms_professionals
+    app: ms-professionals
   ports:
     - name: http
       protocol: TCP
