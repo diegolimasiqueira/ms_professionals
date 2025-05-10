@@ -4,14 +4,14 @@ metadata:
   name: ms-professionals-ingress
   namespace: default
   annotations:
-    konghq.com/preserve-host: "true"
+    kubernetes.io/ingress.class: kong
+    konghq.com/preserve-host: "false"
     konghq.com/strip-path: "false"
     konghq.com/protocols: "http,https"
     konghq.com/plugins: "cors-plugin,request-transformer-plugin"
     konghq.com/override: "true"
     konghq.com/route-type: "v0"
 spec:
-  ingressClassName: kong
   rules:
   - host: ms-professionals.local
     http:

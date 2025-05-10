@@ -26,12 +26,7 @@ spec:
         - name: ASPNETCORE_URLS
           value: "http://+:80"
         - name: ASPNETCORE_HOST
-          value: "ms-professionals.local"
-        - name: ConnectionStrings__DefaultConnection
-          valueFrom:
-            secretKeyRef:
-              name: db-secrets
-              key: connection-string
+          value: "localhost"
         - name: DatabaseSettings__Host
           valueFrom:
             secretKeyRef:
@@ -57,28 +52,29 @@ spec:
             secretKeyRef:
               name: db-secrets
               key: password
+        - name: ConnectionStrings__DefaultConnection
+          valueFrom:
+            secretKeyRef:
+              name: db-secrets
+              key: connection-string
         resources:
           limits:
             cpu: "500m"
             memory: "512Mi"
           requests:
-            cpu: "250m"
-            memory: "256Mi"
+            cpu: "100m"
+            memory: "128Mi"
         readinessProbe:
           httpGet:
             path: /health
             port: 80
-            scheme: HTTP
           initialDelaySeconds: 5
-          periodSeconds: 10
-          timeoutSeconds: 2
-          failureThreshold: 3
+          periodSeconds: 5
         livenessProbe:
           httpGet:
             path: /health
             port: 80
-            scheme: HTTP
-          initialDelaySeconds: 15
-          periodSeconds: 20
+          initialDelaySeconds: 30
+          periodSeconds: 10
           timeoutSeconds: 2
           failureThreshold: 3 
