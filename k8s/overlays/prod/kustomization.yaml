@@ -12,7 +12,7 @@ commonLabels:
 patches:
   - target:
       kind: Deployment
-      name: ms-profissionais
+      name: ms-professionals
     patch: |-
       - op: replace
         path: /spec/template/spec/containers/0/resources/limits/cpu
