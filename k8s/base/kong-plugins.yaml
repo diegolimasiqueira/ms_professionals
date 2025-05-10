@@ -11,6 +11,7 @@ config:
     - 'X-Forwarded-Host: ms-professionals.local'
     - 'X-Forwarded-Port: 80'
     - 'X-Real-IP: 127.0.0.1'
+    - 'Host: ms-professionals.local'
   remove:
     headers: []
   replace:
