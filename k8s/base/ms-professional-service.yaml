@@ -4,10 +4,9 @@ metadata:
   name: ms-professionals-service
   namespace: default
 spec:
-  ports:
-    - port: 80
-      protocol: TCP
-      targetPort: 80
   selector:
-    app: ms-professionals
-  type: LoadBalancer 
+    app: ms-consumers
+  ports:
+  - port: 80
+    targetPort: 80
+  type: ClusterIP
