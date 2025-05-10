@@ -1,0 +1,20 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ms-profissionais-ingress
+  namespace: default
+  annotations:
+    konghq.com/plugins: cors-plugin,request-transformer
+spec:
+  ingressClassName: kong
+  rules:
+  - host: ms-profissionais.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: ms-profissionais-service
+            port:
+              number: 80 
