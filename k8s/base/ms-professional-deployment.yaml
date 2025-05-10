@@ -27,6 +27,11 @@ spec:
           value: "http://+:80"
         - name: ASPNETCORE_HOST
           value: "localhost"
+        - name: ConnectionStrings__DefaultConnection
+          valueFrom:
+            secretKeyRef:
+              name: db-secrets
+              key: connection-string
         - name: DatabaseSettings__Host
           valueFrom:
             secretKeyRef:

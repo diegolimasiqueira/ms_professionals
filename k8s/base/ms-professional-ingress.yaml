@@ -4,6 +4,7 @@ metadata:
   name: ms-professionals-ingress
   namespace: default
   annotations:
+    kubernetes.io/ingress.class: kong
     konghq.com/preserve-host: "false"
     konghq.com/strip-path: "false"
     konghq.com/protocols: "http,https"
@@ -11,12 +12,18 @@ metadata:
     konghq.com/override: "true"
     konghq.com/route-type: "v0"
 spec:
-  ingressClassName: kong
   rules:
   - host: ms-professionals.local
     http:
       paths:
       - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: ms-professionals-service
+            port:
+              number: 80
+      - path: /health
         pathType: Prefix
         backend:
           service:
