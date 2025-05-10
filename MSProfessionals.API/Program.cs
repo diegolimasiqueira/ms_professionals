@@ -37,22 +37,20 @@ builder.Services.AddCors(options =>
     });
 });
 
-// Configure Kestrel
-builder.WebHost.ConfigureKestrel(options =>
-{
-    options.AllowSynchronousIO = false;
-    options.AddServerHeader = false;
-    options.ListenAnyIP(80);
-});
-
-// Configure URLs based on environment
+// Configure Kestrel based on environment
 if (builder.Environment.IsDevelopment())
 {
-    builder.WebHost.UseUrls("http://localhost:5000");
+    builder.WebHost.ConfigureKestrel(options =>
+    {
+        options.ListenLocalhost(5233);
+    });
 }
 else
 {
-    builder.WebHost.UseUrls("http://+:80");
+    builder.WebHost.ConfigureKestrel(options =>
+    {
+        options.ListenAnyIP(80);
+    });
 }
 
 // Add Health Checks
@@ -65,7 +63,9 @@ builder.Services.AddHealthChecksUI(setup =>
     setup.SetEvaluationTimeInSeconds(5);
     setup.MaximumHistoryEntriesPerEndpoint(10);
     setup.SetApiMaxActiveRequests(1);
-    setup.AddHealthCheckEndpoint("API", "http://localhost:80/health");
+    setup.AddHealthCheckEndpoint("API", builder.Environment.IsDevelopment() 
+        ? "http://localhost:5233/health" 
+        : "http://localhost:80/health");
 })
 .AddInMemoryStorage();
 
