@@ -13,7 +13,7 @@ metadata:
     konghq.com/route-type: "v0"
 spec:
   rules:
-  - host: ms-professionals.local
+  - host: professionals.local
     http:
       paths:
       - path: /api
