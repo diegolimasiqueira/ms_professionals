@@ -19,30 +19,61 @@ spec:
         imagePullPolicy: Never
         ports:
         - containerPort: 80
-        resources:
-          requests:
-            cpu: "100m"
-            memory: "128Mi"
-          limits:
-            cpu: "500m"
-            memory: "512Mi"
+          name: http
         env:
         - name: ASPNETCORE_ENVIRONMENT
-          value: "Development"
-        - name: ConnectionStrings__DefaultConnection
+          value: "Production"
+        - name: ASPNETCORE_URLS
+          value: "http://+:80"
+        - name: ASPNETCORE_HOST
+          value: "localhost"
+        - name: DatabaseSettings__Host
           valueFrom:
             secretKeyRef:
               name: db-secrets
-              key: connection-string
-        livenessProbe:
-          httpGet:
-            path: /health
-            port: 80
-          initialDelaySeconds: 30
-          periodSeconds: 10
+              key: host
+        - name: DatabaseSettings__Port
+          valueFrom:
+            secretKeyRef:
+              name: db-secrets
+              key: port
+        - name: DatabaseSettings__Database
+          valueFrom:
+            secretKeyRef:
+              name: db-secrets
+              key: database
+        - name: DatabaseSettings__Username
+          valueFrom:
+            secretKeyRef:
+              name: db-secrets
+              key: username
+        - name: DatabaseSettings__Password
+          valueFrom:
+            secretKeyRef:
+              name: db-secrets
+              key: password
+        resources:
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+          requests:
+            cpu: "250m"
+            memory: "256Mi"
         readinessProbe:
           httpGet:
             path: /health
             port: 80
+            scheme: HTTP
           initialDelaySeconds: 5
-          periodSeconds: 5 
+          periodSeconds: 10
+          timeoutSeconds: 2
+          failureThreshold: 3
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 80
+            scheme: HTTP
+          initialDelaySeconds: 15
+          periodSeconds: 20
+          timeoutSeconds: 2
+          failureThreshold: 3 
