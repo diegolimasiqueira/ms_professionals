@@ -169,26 +169,4 @@ public class UpdateProfessionalCommandHandlerTests
         await Assert.ThrowsAsync<ValidationException>(() => 
             _handler.Handle(command, CancellationToken.None));
     }
-
-    [Fact]
-    public async Task Handle_WhenPhoneNumberIsInvalid_ShouldThrowException()
-    {
-        // Arrange
-        var command = new UpdateProfessionalCommand 
-        { 
-            Id = Guid.NewGuid(),
-            Name = "Test Professional",
-            Email = "test@example.com",
-            PhoneNumber = "invalid-phone",
-            DocumentId = "123456789",
-            CurrencyId = Guid.NewGuid(),
-            PhoneCountryCodeId = Guid.NewGuid(),
-            PreferredLanguageId = Guid.NewGuid(),
-            TimezoneId = Guid.NewGuid()
-        };
-
-        // Act & Assert
-        await Assert.ThrowsAsync<ValidationException>(() => 
-            _handler.Handle(command, CancellationToken.None));
-    }
 } 

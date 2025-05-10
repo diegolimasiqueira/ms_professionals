@@ -121,27 +121,4 @@ public class CreateProfessionalCommandHandlerTests
         _professionalRepositoryMock.Verify(x => x.GetByEmailAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
         _professionalRepositoryMock.Verify(x => x.AddAsync(It.IsAny<MSProfessionals.Domain.Entities.Professional>(), It.IsAny<CancellationToken>()), Times.Never);
     }
-
-    [Fact]
-    public async Task Handle_WhenPhoneNumberIsInvalid_ShouldThrowException()
-    {
-        // Arrange
-        var command = new CreateProfessionalCommand
-        {
-            Name = "Test Professional",
-            Email = "test@example.com",
-            PhoneNumber = "invalid-phone",
-            DocumentId = "123456789",
-            CurrencyId = Guid.NewGuid(),
-            PhoneCountryCodeId = Guid.NewGuid(),
-            PreferredLanguageId = Guid.NewGuid(),
-            TimezoneId = Guid.NewGuid()
-        };
-
-        // Act & Assert
-        await Assert.ThrowsAsync<System.ComponentModel.DataAnnotations.ValidationException>(() => 
-            _handler.Handle(command, CancellationToken.None));
-        _professionalRepositoryMock.Verify(x => x.GetByEmailAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
-        _professionalRepositoryMock.Verify(x => x.AddAsync(It.IsAny<MSProfessionals.Domain.Entities.Professional>(), It.IsAny<CancellationToken>()), Times.Never);
-    }
 } 

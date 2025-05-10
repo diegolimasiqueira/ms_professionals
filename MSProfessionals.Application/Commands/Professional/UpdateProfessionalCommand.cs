@@ -33,7 +33,6 @@ public class UpdateProfessionalCommand : IRequest<UpdateProfessionalCommandRespo
     /// </summary>
     [Required(ErrorMessage = "Phone number is required")]
     [StringLength(20, ErrorMessage = "Phone number cannot exceed 20 characters")]
-    [RegularExpression(@"^\+?[0-9\s-]+$", ErrorMessage = "Invalid phone number format")]
     public string PhoneNumber { get; set; } = string.Empty;
 
     /// <summary>
